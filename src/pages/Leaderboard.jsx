@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabase.js'
 import { calculateScore } from '../scoring.js'
+import { MAX_POSSIBLE } from '../data/teams.js'
+import { flagFor, FLAGS } from '../data/flags.js'
 
 const MEDAL = ['🥇', '🥈', '🥉']
 
@@ -29,7 +31,7 @@ export default function Leaderboard() {
     .map((e) => ({ ...e, ...calculateScore(e, results || {}) }))
     .sort((a, b) => b.total - a.total)
 
-  const maxPossible = 130 // theoretical max
+  const maxPossible = MAX_POSSIBLE
 
   return (
     <div className="pt-8 space-y-6">
@@ -93,7 +95,8 @@ export default function Leaderboard() {
                 <div className="flex-1">
                   <div className="font-semibold text-lg">{player.name}</div>
                   <div className="text-xs text-muted font-mono">
-                    🏆 {player.champion || '—'} &nbsp;|&nbsp; ⚽ {player.golden_boot || '—'}
+                    🏆 {player.champion ? `${FLAGS[player.champion] || ''} ${player.champion}` : '—'}
+                    &nbsp;|&nbsp; ⚽ {player.golden_boot || '—'}
                   </div>
                 </div>
 
