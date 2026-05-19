@@ -19,10 +19,11 @@ export default function Navbar() {
         </Link>
 
         <nav className="flex gap-1 items-center">
+          <NavLink to="/how-it-works" current={pathname}>How it Works</NavLink>
           {!loading && user && (
             <>
               <NavLink to="/" current={pathname}>Dashboard</NavLink>
-              <NavLink to="/enter" current={pathname}>Bracket</NavLink>
+              <NavLink to="/bracket/me" current={pathname}>Bracket</NavLink>
               <NavLink to="/admin" current={pathname}>Admin</NavLink>
               <button
                 onClick={signOut}

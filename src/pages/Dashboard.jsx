@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth.jsx'
 import { listMyLeagues } from '../lib/leagues.js'
 import { supabase } from '../supabase.js'
+import { isLocked } from '../lib/deadline.js'
+import DeadlineBanner from '../components/DeadlineBanner.jsx'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -38,15 +40,18 @@ export default function Dashboard() {
     )
   }
 
+  const locked = isLocked()
+
   return (
     <div className="pt-8 max-w-3xl mx-auto space-y-8">
-      <div className="text-center">
+      <div className="text-center space-y-3">
         <h1 className="font-display text-5xl text-lime tracking-widest">YOUR DASHBOARD</h1>
-        <p className="text-muted font-mono text-sm mt-1">Signed in as {user?.email}</p>
+        <p className="text-muted font-mono text-sm">Signed in as {user?.email}</p>
+        <DeadlineBanner variant="large" />
       </div>
 
       {/* Bracket card */}
-      <Section title={hasEntry ? '✅ Your Bracket' : '⚠️ Fill Out Your Bracket'}>
+      <Section title={hasEntry ? '✅ Your Bracket' : (locked ? '🔒 Pool Locked' : '⚠️ Fill Out Your Bracket')}>
         <div className="bg-grass/20 border border-grass rounded-xl p-5 flex items-center justify-between gap-4">
           <div>
             <div className="font-display text-xl text-lime">
@@ -54,16 +59,29 @@ export default function Dashboard() {
             </div>
             <div className="text-sm text-muted mt-1">
               {hasEntry
-                ? 'You can edit your picks any time before tournament kickoff.'
-                : 'Submit your picks to compete in your leagues.'}
+                ? (locked
+                    ? 'Picks are locked — view your bracket and league standings.'
+                    : 'You can edit your picks any time before tournament kickoff.')
+                : (locked
+                    ? 'The deadline has passed. No picks under your account.'
+                    : 'Submit your picks to compete in your leagues.')}
             </div>
           </div>
-          <Link
-            to="/enter"
-            className="px-4 py-2 bg-lime text-pitch font-bold rounded-lg hover:bg-lime/90 whitespace-nowrap"
-          >
-            {hasEntry ? 'Edit Picks' : 'Fill Out Bracket →'}
-          </Link>
+          {hasEntry ? (
+            <Link
+              to={locked ? '/bracket/me' : '/enter'}
+              className="px-4 py-2 bg-lime text-pitch font-bold rounded-lg hover:bg-lime/90 whitespace-nowrap"
+            >
+              {locked ? 'View Bracket →' : '✏️ Edit Picks'}
+            </Link>
+          ) : !locked ? (
+            <Link
+              to="/enter"
+              className="px-4 py-2 bg-lime text-pitch font-bold rounded-lg hover:bg-lime/90 whitespace-nowrap"
+            >
+              Fill Out Bracket →
+            </Link>
+          ) : null}
         </div>
       </Section>
 

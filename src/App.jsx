@@ -12,6 +12,8 @@ import LeagueNew from './pages/LeagueNew.jsx'
 import LeagueJoin from './pages/LeagueJoin.jsx'
 import League from './pages/League.jsx'
 import Enter from './pages/Enter.jsx'
+import Bracket from './pages/Bracket.jsx'
+import HowItWorks from './pages/HowItWorks.jsx'
 import Admin from './pages/Admin.jsx'
 
 export default function App() {
@@ -26,9 +28,13 @@ export default function App() {
           <Route path="/forgot-password"  element={<ForgotPassword />} />
           <Route path="/reset-password"   element={<ResetPassword />} />
 
+          {/* Public marketing/info routes */}
+          <Route path="/how-it-works"     element={<HowItWorks />} />
+
           {/* Protected routes */}
           <Route path="/"                 element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path="/enter"            element={<RequireAuth><Enter /></RequireAuth>} />
+          <Route path="/bracket/:userId"  element={<RequireAuth><Bracket /></RequireAuth>} />
           <Route path="/leagues/new"      element={<RequireAuth><LeagueNew /></RequireAuth>} />
           <Route path="/leagues/join"     element={<RequireAuth><LeagueJoin /></RequireAuth>} />
           <Route path="/leagues/:id"      element={<RequireAuth><League /></RequireAuth>} />

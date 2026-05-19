@@ -6,6 +6,7 @@ import { getLeague, getLeagueMembersWithEntries } from '../lib/leagues.js'
 import { calculateScore } from '../scoring.js'
 import { MAX_POSSIBLE } from '../data/teams.js'
 import { FLAGS } from '../data/flags.js'
+import { isLocked } from '../lib/deadline.js'
 
 const MEDAL = ['🥇', '🥈', '🥉']
 
@@ -124,6 +125,7 @@ export default function League() {
           const pct = MAX_POSSIBLE > 0 ? (player.total / MAX_POSSIBLE) * 100 : 0
           const isMe = player.user_id === user?.id
           const isOpen = expanded === player.user_id
+          const canViewBracket = isMe || isLocked() // own always; others only after lock
           return (
             <div
               key={player.user_id}
@@ -162,22 +164,36 @@ export default function League() {
               </button>
 
               {isOpen && (
-                <div className="border-t border-grass bg-grass/10 p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { label: 'Groups',    value: player.breakdown?.groups ?? 0 },
-                    { label: '3rd Place', value: player.breakdown?.third  ?? 0 },
-                    { label: 'R32',       value: player.breakdown?.R32    ?? 0 },
-                    { label: 'R16',       value: player.breakdown?.R16    ?? 0 },
-                    { label: 'Quarter',   value: player.breakdown?.QF     ?? 0 },
-                    { label: 'Semi',      value: player.breakdown?.SF     ?? 0 },
-                    { label: 'Final',     value: player.breakdown?.Final  ?? 0 },
-                    { label: 'Bonuses',   value: player.breakdown?.bonus  ?? 0 },
-                  ].map(({ label, value }) => (
-                    <div key={label} className="bg-grass/30 rounded-lg p-3 text-center">
-                      <div className="text-muted text-xs uppercase tracking-wider font-mono">{label}</div>
-                      <div className="font-display text-xl text-lime">{value}</div>
+                <div className="border-t border-grass bg-grass/10 p-4 space-y-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {[
+                      { label: 'Groups',    value: player.breakdown?.groups ?? 0 },
+                      { label: '3rd Place', value: player.breakdown?.third  ?? 0 },
+                      { label: 'R32',       value: player.breakdown?.R32    ?? 0 },
+                      { label: 'R16',       value: player.breakdown?.R16    ?? 0 },
+                      { label: 'Quarter',   value: player.breakdown?.QF     ?? 0 },
+                      { label: 'Semi',      value: player.breakdown?.SF     ?? 0 },
+                      { label: 'Final',     value: player.breakdown?.Final  ?? 0 },
+                      { label: 'Bonuses',   value: player.breakdown?.bonus  ?? 0 },
+                    ].map(({ label, value }) => (
+                      <div key={label} className="bg-grass/30 rounded-lg p-3 text-center">
+                        <div className="text-muted text-xs uppercase tracking-wider font-mono">{label}</div>
+                        <div className="font-display text-xl text-lime">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {canViewBracket ? (
+                    <Link
+                      to={isMe ? '/bracket/me' : `/bracket/${player.user_id}`}
+                      className="block w-full text-center py-2 border border-lime text-lime rounded-lg hover:bg-lime/10 text-sm font-mono"
+                    >
+                      View {isMe ? 'my' : `${player.name}'s`} full bracket →
+                    </Link>
+                  ) : (
+                    <div className="text-center text-xs font-mono text-muted py-2">
+                      🔒 Full bracket visible after picks lock
                     </div>
-                  ))}
+                  )}
                 </div>
               )}
             </div>

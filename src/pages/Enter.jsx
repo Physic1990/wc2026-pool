@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { supabase } from '../supabase.js'
 import { useAuth } from '../lib/auth.jsx'
+import { isLocked } from '../lib/deadline.js'
+import DeadlineBanner from '../components/DeadlineBanner.jsx'
 import {
   GROUPS, GROUP_LABELS,
   R32_MATCHES, R16_MATCHES, QF_MATCHES, SF_MATCHES, FINAL_MATCH,
@@ -194,15 +196,19 @@ export default function Enter() {
       </div>
     )
   }
+  // Past the deadline → no editing. Send them to the read-only view.
+  if (isLocked()) {
+    return <Navigate to="/bracket/me" replace />
+  }
   if (done) return <SuccessScreen name={name} isEditing={isEditing} />
 
   return (
     <div className="pt-8 max-w-3xl mx-auto space-y-6">
-      <div className="text-center">
+      <div className="text-center space-y-2">
         <h1 className="font-display text-5xl text-lime tracking-widest">
           {isEditing ? 'EDIT YOUR PICKS' : 'ENTER YOUR PICKS'}
         </h1>
-        <p className="text-muted font-mono text-sm mt-1">Deadline: June 11, 2026 before kickoff</p>
+        <div className="flex justify-center"><DeadlineBanner /></div>
       </div>
 
       <div className="flex gap-2">
