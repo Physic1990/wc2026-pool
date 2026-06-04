@@ -13,31 +13,15 @@ export default function ForgotPassword() {
     e.preventDefault()
     setSubmitting(true)
     setError('')
-
-    // Check if the email exists before attempting reset
-    const { data: userData } = await supabase
-      .from('entries')
-      .select('id')
-      .eq('user_id', (await supabase.auth.getUser()).data?.user?.id)
-      .limit(1)
-
-    // Use admin-safe check: try to sign in with a bad password to detect if user exists
     const normalized = email.trim().toLowerCase()
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: normalized,
-      password: '____invalid____check____',
-    })
 
-    // "Invalid login credentials" = user exists but wrong password (expected)
-    // "Email not confirmed" = user exists
-    // Anything else likely means user doesn't exist
-    const userExists =
-      signInError?.message?.includes('Invalid login credentials') ||
-      signInError?.message?.includes('Email not confirmed')
+    // Check if this email has an account via a DB function
+    const { data: exists, error: checkError } = await supabase
+      .rpc('email_exists', { p_email: normalized })
 
-    if (!userExists) {
+    if (!checkError && exists === false) {
       setSubmitting(false)
-      setError(`We don't have an account for ${normalized}. Please sign up first.`)
+      setError(`No account found for ${normalized}. Please sign up first.`)
       return
     }
 
