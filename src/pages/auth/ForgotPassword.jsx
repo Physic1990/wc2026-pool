@@ -13,10 +13,37 @@ export default function ForgotPassword() {
     e.preventDefault()
     setSubmitting(true)
     setError('')
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      email.trim().toLowerCase(),
-      { redirectTo: `${window.location.origin}/reset-password` }
-    )
+
+    // Check if the email exists before attempting reset
+    const { data: userData } = await supabase
+      .from('entries')
+      .select('id')
+      .eq('user_id', (await supabase.auth.getUser()).data?.user?.id)
+      .limit(1)
+
+    // Use admin-safe check: try to sign in with a bad password to detect if user exists
+    const normalized = email.trim().toLowerCase()
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: normalized,
+      password: '____invalid____check____',
+    })
+
+    // "Invalid login credentials" = user exists but wrong password (expected)
+    // "Email not confirmed" = user exists
+    // Anything else likely means user doesn't exist
+    const userExists =
+      signInError?.message?.includes('Invalid login credentials') ||
+      signInError?.message?.includes('Email not confirmed')
+
+    if (!userExists) {
+      setSubmitting(false)
+      setError(`We don't have an account for ${normalized}. Please sign up first.`)
+      return
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(normalized, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
     setSubmitting(false)
     if (error) setError(error.message)
     else setSent(true)
@@ -26,7 +53,7 @@ export default function ForgotPassword() {
     return (
       <AuthShell title="Check Your Email">
         <InfoBox>
-          If <strong>{email}</strong> matches an account, we sent a password-reset link.
+          We sent a password-reset link to <strong>{email}</strong>. Check your inbox!
         </InfoBox>
         <div className="mt-6 text-center text-sm font-mono">
           <Link to="/sign-in" className="text-lime hover:underline">← Back to sign in</Link>
