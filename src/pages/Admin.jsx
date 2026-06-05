@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../supabase.js'
+import { fetchLiveResults } from '../lib/footballData.js'
 import {
   GROUPS, GROUP_LABELS,
   R32_MATCHES, R16_MATCHES, QF_MATCHES, SF_MATCHES, FINAL_MATCH,
@@ -21,6 +22,25 @@ export default function Admin() {
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [syncing, setSyncing] = useState(false)
+  const [syncMsg, setSyncMsg] = useState('')
+
+  async function syncFromAPI() {
+    setSyncing(true)
+    setSyncMsg('')
+    try {
+      const live = await fetchLiveResults()
+      setResults(prev => ({
+        ...prev,
+        groups: { ...prev.groups, ...live.groups },
+        knockout_picks: { ...prev.knockout_picks, ...live.knockout_picks },
+      }))
+      setSyncMsg('✅ Synced from football-data.org! Review then click Save.')
+    } catch (e) {
+      setSyncMsg('❌ Sync failed: ' + e.message)
+    }
+    setSyncing(false)
+  }
 
   useEffect(() => {
     if (!authed) return
@@ -95,16 +115,30 @@ export default function Admin() {
 
   return (
     <div className="pt-8 max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <h1 className="font-display text-4xl text-lime tracking-widest">ADMIN PANEL</h1>
-        <button
-          onClick={save}
-          disabled={saving}
-          className={`px-6 py-2 rounded-xl font-bold transition-all ${saved ? 'bg-green-600 text-white' : 'bg-lime text-pitch hover:bg-lime/90'}`}
-        >
-          {saving ? 'Saving...' : saved ? '✓ Saved!' : 'Save Results'}
-        </button>
+        <div className="flex gap-3 items-center flex-wrap">
+          <button
+            onClick={syncFromAPI}
+            disabled={syncing}
+            className="px-6 py-2 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 transition-all"
+          >
+            {syncing ? '⏳ Syncing...' : '🔄 Sync Live Results'}
+          </button>
+          <button
+            onClick={save}
+            disabled={saving}
+            className={`px-6 py-2 rounded-xl font-bold transition-all ${saved ? 'bg-green-600 text-white' : 'bg-lime text-pitch hover:bg-lime/90'}`}
+          >
+            {saving ? 'Saving...' : saved ? '✓ Saved!' : 'Save Results'}
+          </button>
+        </div>
       </div>
+      {syncMsg && (
+        <div className="text-sm font-mono bg-grass/20 border border-grass rounded-lg p-3">
+          {syncMsg}
+        </div>
+      )}
 
       {/* Group Results */}
       <Section title="📋 Group Stage Results (1st / 2nd / 3rd)">
