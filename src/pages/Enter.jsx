@@ -37,6 +37,7 @@ export default function Enter() {
   const [knockoutPicks, setKnockoutPicks] = useState({})
 
   const [bonuses, setBonuses] = useState({ golden_boot: '', golden_glove: '', golden_ball: '', dark_horse: '' })
+  const [squadPlayers, setSquadPlayers] = useState(null) // null = not loaded yet
 
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
@@ -49,12 +50,17 @@ export default function Enter() {
     if (!user) return
     let cancelled = false
     async function load() {
-      const { data, error } = await supabase
-        .from('entries')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle()
+      const [entryRes, resultsRes] = await Promise.all([
+        supabase.from('entries').select('*').eq('user_id', user.id).maybeSingle(),
+        supabase.from('results').select('data').eq('id', 1).maybeSingle(),
+      ])
       if (cancelled) return
+
+      // Load fetched squads if available
+      const squads = resultsRes.data?.data?._squads
+      if (squads && squads.length > 0) setSquadPlayers(squads)
+
+      const { data, error } = entryRes
       if (error) {
         setError(error.message)
       } else if (data) {
@@ -728,12 +734,18 @@ function FinalStep({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {[
-          { key: 'golden_boot',  label: '🥇 Golden Boot — Top Scorer',  players: OUTFIELD_PLAYERS },
-          { key: 'golden_glove', label: '🧤 Golden Glove — Best Keeper', players: GOALKEEPERS },
-          { key: 'golden_ball',  label: '⭐ Golden Ball — Best Player',  players: OUTFIELD_PLAYERS },
-        ].map(({ key, label, players }) => (
+          { key: 'golden_boot',  label: '🥇 Golden Boot — Top Scorer',  posFilter: p => p.pos !== 'GK' },
+          { key: 'golden_glove', label: '🧤 Golden Glove — Best Keeper', posFilter: p => p.pos === 'GK' },
+          { key: 'golden_ball',  label: '⭐ Golden Ball — Best Player',  posFilter: p => p.pos !== 'GK' },
+        ].map(({ key, label, posFilter }) => {
+          const allPlayers = squadPlayers || [...OUTFIELD_PLAYERS, ...GOALKEEPERS]
+          const players = allPlayers.filter(posFilter).sort((a, b) => a.name.localeCompare(b.name))
+          return (
           <div key={key} className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2">
-            <div className="font-mono text-xs text-muted uppercase tracking-wider">{label}</div>
+            <div className="font-mono text-xs text-muted uppercase tracking-wider">
+              {label}
+              {squadPlayers && <span className="ml-2 text-lime">✓ real squads</span>}
+            </div>
             <SearchableSelect
               value={bonuses[key]}
               onChange={(v) => setBonuses((b) => ({ ...b, [key]: v }))}
@@ -741,7 +753,8 @@ function FinalStep({
               placeholder="Search player..."
             />
           </div>
-        ))}
+          )
+        })}
 
         {/* Dark Horse — searchable ranked dropdown */}
         <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2 sm:col-span-2">
