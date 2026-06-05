@@ -8,7 +8,7 @@ import {
 } from '../data/teams.js'
 import { flagFor } from '../data/flags.js'
 
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'wc2026admin'
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'mashashwothoadmin'
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false)
