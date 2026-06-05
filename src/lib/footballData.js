@@ -3,8 +3,6 @@
  * Fetches live match results and maps them to the app's results format.
  */
 
-const API_KEY = import.meta.env.VITE_FOOTBALL_DATA_KEY
-const BASE = 'https://api.football-data.org/v4'
 const WC_CODE = 'WC'
 
 // Map football-data.org team names → our app's team names
@@ -71,14 +69,11 @@ function mapTeam(name) {
 }
 
 async function apiFetch(path) {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { 'X-Auth-Token': API_KEY },
-  })
-  // Respect rate limit headers
-  const remaining = res.headers.get('X-Requests-Available-Minute')
-  if (remaining && parseInt(remaining) < 3) {
-    console.warn('football-data.org rate limit nearly reached')
-  }
+  // Route through our Vercel serverless proxy to avoid CORS + keep API key server-side
+  const [pathname, qs] = path.split('?')
+  const params = new URLSearchParams(qs || '')
+  params.set('path', pathname)
+  const res = await fetch(`/api/football?${params.toString()}`)
   if (!res.ok) throw new Error(`API error ${res.status}`)
   return res.json()
 }
