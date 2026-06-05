@@ -148,25 +148,27 @@ export async function fetchTopScorers() {
 }
 
 /**
- * Fetch goal scorers for all finished matches.
- * Returns array of { matchId, homeTeam, awayTeam, score, goals: [{name, team, minute}] }
+ * Fetch ALL matches (finished + scheduled + live) for WC 2026.
+ * Returns array of { matchId, homeTeam, awayTeam, homeScore, awayScore, status, stage, utcDate, goals }
  */
 export async function fetchMatchGoalScorers() {
-  const data = await apiFetch(`/competitions/${WC_CODE}/matches?season=2026&status=FINISHED`)
+  const data = await apiFetch(`/competitions/${WC_CODE}/matches?season=2026`)
   const matches = data.matches || []
   return matches.map(m => ({
     matchId: m.id,
-    homeTeam: mapTeam(m.homeTeam.name),
-    awayTeam: mapTeam(m.awayTeam.name),
-    homeScore: m.score.fullTime.home,
-    awayScore: m.score.fullTime.away,
+    homeTeam: mapTeam(m.homeTeam?.name || 'TBD'),
+    awayTeam: mapTeam(m.awayTeam?.name || 'TBD'),
+    homeScore: m.score?.fullTime?.home ?? null,
+    awayScore: m.score?.fullTime?.away ?? null,
+    status: m.status, // SCHEDULED, TIMED, IN_PLAY, PAUSED, FINISHED, SUSPENDED, POSTPONED
     stage: m.stage,
+    matchday: m.matchday,
     utcDate: m.utcDate,
     goals: (m.goals || []).map(g => ({
       name: g.scorer?.name || '',
       team: mapTeam(g.team?.name || ''),
       minute: g.minute,
-      type: g.type, // NORMAL, OWN_GOAL, PENALTY
+      type: g.type,
     })),
   }))
 }
