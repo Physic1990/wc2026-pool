@@ -11,6 +11,8 @@ import {
   teamsForMatch, slotLabel,
 } from '../data/teams.js'
 import { flagFor } from '../data/flags.js'
+import SearchableSelect from '../components/SearchableSelect.jsx'
+import { WC_PLAYERS } from '../data/players.js'
 
 const STEP_LABELS = ['Name', 'Groups', 'R32', 'R16', 'QF', 'SF', 'Final & Bonuses']
 
@@ -732,38 +734,28 @@ function FinalStep({
         ].map(({ key, label }) => (
           <div key={key} className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2">
             <div className="font-mono text-xs text-muted uppercase tracking-wider">{label}</div>
-            <input
-              type="text"
+            <SearchableSelect
               value={bonuses[key]}
-              onChange={(e) => setBonuses((b) => ({ ...b, [key]: e.target.value }))}
-              placeholder="Player name..."
-              className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
+              onChange={(v) => setBonuses((b) => ({ ...b, [key]: v }))}
+              options={WC_PLAYERS.map(p => ({ value: p.name, label: p.name, sub: p.team }))}
+              placeholder="Search player..."
             />
           </div>
         ))}
 
-        {/* Dark Horse — ranked dropdown */}
+        {/* Dark Horse — searchable ranked dropdown */}
         <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2 sm:col-span-2">
           <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Lowest-ranked team in QF+ (3 pts)</div>
           <div className="text-xs text-muted font-mono bg-grass/20 rounded-lg p-2 space-y-1">
             <p>Pick the team with the <strong className="text-lime">lowest FIFA rank</strong> that makes the Quarterfinals.</p>
-            <p>Example: If New Zealand (FIFA #86) somehow reach the QF, anyone who picked them wins 3 pts. The lower the rank you pick, the bigger the upset — but the harder to get right!</p>
+            <p>Example: If New Zealand (FIFA #86) somehow reach the QF, anyone who picked them wins 3 pts.</p>
           </div>
-          <select
+          <SearchableSelect
             value={bonuses.dark_horse}
-            onChange={(e) => setBonuses((b) => ({ ...b, dark_horse: e.target.value }))}
-            className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
-          >
-            <option value="">— Select a team —</option>
-            {FIFA_RANKED_TEAMS.map((t) => (
-              <option key={t.name} value={t.name}>FIFA #{t.fifaRank} — {t.name}</option>
-            ))}
-          </select>
-          {bonuses.dark_horse && (
-            <div className="text-xs font-mono text-lime">
-              ✓ {bonuses.dark_horse} — FIFA #{FIFA_RANKED_TEAMS.find(t => t.name === bonuses.dark_horse)?.fifaRank}
-            </div>
-          )}
+            onChange={(v) => setBonuses((b) => ({ ...b, dark_horse: v }))}
+            options={FIFA_RANKED_TEAMS.map(t => ({ value: t.name, label: t.name, sub: `FIFA #${t.fifaRank}` }))}
+            placeholder="Search team..."
+          />
         </div>
       </div>
 
