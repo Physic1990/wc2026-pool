@@ -5,7 +5,7 @@ import { listMyLeagues } from '../lib/leagues.js'
 import { supabase } from '../supabase.js'
 import { isLocked } from '../lib/deadline.js'
 import DeadlineBanner from '../components/DeadlineBanner.jsx'
-import { FIFA_RANKED_TEAMS } from './Enter.jsx'
+import { FIFA_RANKED_TEAMS } from '../data/rankings.js'
 
 export default function Dashboard() {
   const { user } = useAuth()

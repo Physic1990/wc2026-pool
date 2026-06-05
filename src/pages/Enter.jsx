@@ -16,57 +16,7 @@ const STEP_LABELS = ['Name', 'Groups', 'R32', 'R16', 'QF', 'SF', 'Final & Bonuse
 
 // Official FIFA Men's World Ranking (April 2026) — WC 2026 qualified teams only
 // Ordered by FIFA rank (lowest number = strongest/favourite)
-export const FIFA_RANKED_TEAMS = [
-  { name: 'France',                 fifaRank: 1  },
-  { name: 'Spain',                  fifaRank: 2  },
-  { name: 'Argentina',              fifaRank: 3  },
-  { name: 'England',                fifaRank: 4  },
-  { name: 'Portugal',               fifaRank: 5  },
-  { name: 'Netherlands',            fifaRank: 6  },
-  { name: 'Brazil',                 fifaRank: 7  },
-  { name: 'Morocco',                fifaRank: 8  },
-  { name: 'Belgium',                fifaRank: 9  },
-  { name: 'Germany',                fifaRank: 10 },
-  { name: 'Croatia',                fifaRank: 11 },
-  { name: 'Colombia',               fifaRank: 13 },
-  { name: 'Senegal',                fifaRank: 14 },
-  { name: 'Mexico',                 fifaRank: 15 },
-  { name: 'USA',                    fifaRank: 16 },
-  { name: 'Uruguay',                fifaRank: 17 },
-  { name: 'Japan',                  fifaRank: 18 },
-  { name: 'Switzerland',            fifaRank: 19 },
-  { name: 'IR Iran',                fifaRank: 21 },
-  { name: 'Korea Republic',         fifaRank: 22 },
-  { name: 'Ecuador',                fifaRank: 23 },
-  { name: 'Austria',                fifaRank: 24 },
-  { name: 'Australia',              fifaRank: 26 },
-  { name: 'Canada',                 fifaRank: 27 },
-  { name: 'Norway',                 fifaRank: 29 },
-  { name: 'Panama',                 fifaRank: 30 },
-  { name: 'Egypt',                  fifaRank: 34 },
-  { name: 'Algeria',                fifaRank: 35 },
-  { name: 'Scotland',               fifaRank: 36 },
-  { name: 'Paraguay',               fifaRank: 39 },
-  { name: 'Tunisia',                fifaRank: 40 },
-  { name: "Côte d'Ivoire",          fifaRank: 42 },
-  { name: 'Uzbekistan',             fifaRank: 50 },
-  { name: 'Qatar',                  fifaRank: 51 },
-  { name: 'Saudi Arabia',           fifaRank: 60 },
-  { name: 'South Africa',           fifaRank: 61 },
-  { name: 'Jordan',                 fifaRank: 66 },
-  { name: 'Cabo Verde',             fifaRank: 68 },
-  { name: 'Ghana',                  fifaRank: 72 },
-  { name: 'Curaçao',                fifaRank: 82 },
-  { name: 'Haiti',                  fifaRank: 84 },
-  { name: 'New Zealand',            fifaRank: 86 },
-  // Not in April 2026 top 100 list but qualified:
-  { name: 'Bosnia and Herzegovina', fifaRank: 90 },
-  { name: 'Türkiye',                fifaRank: 38 },
-  { name: 'Sweden',                 fifaRank: 25 },
-  { name: 'Czechia',                fifaRank: 33 },
-  { name: 'Congo DR',               fifaRank: 95 },
-  { name: 'Iraq',                   fifaRank: 88 },
-].sort((a, b) => a.fifaRank - b.fifaRank)
+import { FIFA_RANKED_TEAMS } from '../data/rankings.js'
 
 export default function Enter() {
   const { user } = useAuth()
