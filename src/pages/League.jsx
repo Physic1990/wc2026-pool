@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase.js'
 import { useAuth } from '../lib/auth.jsx'
-import { getLeague, getLeagueMembersWithEntries } from '../lib/leagues.js'
+import { getLeague, getLeagueMembersWithEntries, renameLeague, deleteLeague, removeMember } from '../lib/leagues.js'
 import { calculateScore } from '../scoring.js'
 import { MAX_POSSIBLE } from '../data/teams.js'
 import { FLAGS } from '../data/flags.js'
@@ -13,6 +13,7 @@ const MEDAL = ['🥇', '🥈', '🥉']
 export default function League() {
   const { id } = useParams()
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [league, setLeague] = useState(null)
   const [members, setMembers] = useState([])
   const [results, setResults] = useState({})
@@ -20,6 +21,12 @@ export default function League() {
   const [error, setError] = useState('')
   const [expanded, setExpanded] = useState(null)
   const [copied, setCopied] = useState(false)
+  // Management state
+  const [managing, setManaging] = useState(false)
+  const [renaming, setRenaming] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [actionError, setActionError] = useState('')
+  const [removing, setRemoving] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -76,6 +83,37 @@ export default function League() {
     setTimeout(() => setCopied(false), 1500)
   }
 
+  const isCreator = league?.created_by === user?.id
+
+  async function handleRename() {
+    if (!newName.trim()) return
+    setActionError('')
+    try {
+      await renameLeague(id, newName)
+      setLeague(prev => ({ ...prev, name: newName.trim() }))
+      setRenaming(false)
+      setNewName('')
+    } catch (e) { setActionError(e.message) }
+  }
+
+  async function handleDeleteLeague() {
+    if (!window.confirm(`Delete "${league.name}"? This cannot be undone.`)) return
+    try {
+      await deleteLeague(id)
+      navigate('/')
+    } catch (e) { setActionError(e.message) }
+  }
+
+  async function handleRemoveMember(userId, name) {
+    if (!window.confirm(`Remove ${name} from this league?`)) return
+    setRemoving(userId)
+    try {
+      await removeMember(id, userId)
+      setMembers(prev => prev.filter(m => m.user_id !== userId))
+    } catch (e) { setActionError(e.message) }
+    setRemoving(null)
+  }
+
   return (
     <div className="pt-8 space-y-6">
       {/* Header */}
@@ -93,6 +131,97 @@ export default function League() {
           {copied && <span className="text-lime">✓ copied</span>}
         </div>
       </div>
+
+      {/* Creator management */}
+      {isCreator && (
+        <div className="max-w-3xl mx-auto">
+          <button
+            onClick={() => setManaging(v => !v)}
+            className="text-xs font-mono text-muted hover:text-lime border border-grass hover:border-lime px-3 py-1.5 rounded-lg transition-all"
+          >
+            ⚙️ {managing ? 'Hide settings' : 'Manage league'}
+          </button>
+
+          {managing && (
+            <div className="mt-3 bg-grass/10 border border-grass rounded-2xl p-5 space-y-5">
+              {actionError && (
+                <div className="text-xs font-mono text-red-400 bg-red-900/20 border border-red-700 rounded-lg p-3">
+                  {actionError}
+                </div>
+              )}
+
+              {/* Rename */}
+              <div>
+                <div className="text-xs text-muted font-mono uppercase tracking-widest mb-2">Rename League</div>
+                {renaming ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={e => setNewName(e.target.value)}
+                      placeholder={league.name}
+                      className="flex-1 bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
+                      onKeyDown={e => e.key === 'Enter' && handleRename()}
+                      autoFocus
+                    />
+                    <button onClick={handleRename} className="px-4 py-2 bg-lime text-pitch font-bold rounded-lg text-sm">Save</button>
+                    <button onClick={() => setRenaming(false)} className="px-4 py-2 border border-grass rounded-lg text-sm text-muted hover:text-lime">Cancel</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => { setRenaming(true); setNewName(league.name) }}
+                    className="px-4 py-2 border border-grass rounded-lg text-sm text-muted hover:text-lime hover:border-lime transition-all"
+                  >
+                    ✏️ Rename "{league.name}"
+                  </button>
+                )}
+              </div>
+
+              {/* Remove members */}
+              <div>
+                <div className="text-xs text-muted font-mono uppercase tracking-widest mb-2">Members</div>
+                <div className="space-y-2">
+                  {members.map(m => {
+                    const entry = ranked.find(r => r.user_id === m.user_id)
+                    const name = entry?.name || 'No bracket yet'
+                    const isMe = m.user_id === user?.id
+                    return (
+                      <div key={m.user_id} className="flex items-center justify-between bg-pitch border border-grass rounded-lg px-4 py-2.5">
+                        <div>
+                          <span className="text-sm font-semibold">{name}</span>
+                          {isMe && <span className="ml-2 text-xs text-lime font-mono border border-lime rounded px-1">YOU</span>}
+                          {m.user_id === league.created_by && <span className="ml-2 text-xs text-muted font-mono">creator</span>}
+                        </div>
+                        {!isMe && (
+                          <button
+                            onClick={() => handleRemoveMember(m.user_id, name)}
+                            disabled={removing === m.user_id}
+                            className="text-xs font-mono text-red-400 hover:text-red-300 border border-red-800 hover:border-red-500 px-3 py-1 rounded-lg transition-all disabled:opacity-40"
+                          >
+                            {removing === m.user_id ? 'Removing...' : 'Remove'}
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Delete league */}
+              <div className="border-t border-grass pt-4">
+                <div className="text-xs text-muted font-mono uppercase tracking-widest mb-2">Danger Zone</div>
+                <button
+                  onClick={handleDeleteLeague}
+                  className="px-4 py-2 bg-red-900/30 border border-red-700 text-red-400 hover:bg-red-900/50 rounded-lg text-sm font-bold transition-all"
+                >
+                  🗑 Delete League
+                </button>
+                <p className="text-xs text-muted font-mono mt-1">This permanently deletes the league and removes all members.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats bar */}
       {ranked.length > 0 && (

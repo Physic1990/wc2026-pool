@@ -64,6 +64,34 @@ export async function listMyLeagues(userId) {
   }))
 }
 
+/** Rename a league (creator only). */
+export async function renameLeague(leagueId, newName) {
+  const { error } = await supabase
+    .from('leagues')
+    .update({ name: newName.trim() })
+    .eq('id', leagueId)
+  if (error) throw error
+}
+
+/** Delete a league (creator only — cascades to league_members). */
+export async function deleteLeague(leagueId) {
+  const { error } = await supabase
+    .from('leagues')
+    .delete()
+    .eq('id', leagueId)
+  if (error) throw error
+}
+
+/** Remove a member from a league (creator only). */
+export async function removeMember(leagueId, userId) {
+  const { error } = await supabase
+    .from('league_members')
+    .delete()
+    .eq('league_id', leagueId)
+    .eq('user_id', userId)
+  if (error) throw error
+}
+
 /** Fetch a single league by id. */
 export async function getLeague(leagueId) {
   const { data, error } = await supabase
