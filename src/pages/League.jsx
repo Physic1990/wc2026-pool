@@ -279,8 +279,14 @@ export default function League() {
                     {isMe && <span className="text-xs font-mono text-lime border border-lime rounded px-1.5">YOU</span>}
                   </div>
                   <div className="text-xs text-muted font-mono">
-                    🏆 {player.champion ? `${FLAGS[player.champion] || ''} ${player.champion}` : '—'}
-                    &nbsp;|&nbsp; ⚽ {player.golden_boot || '—'}
+                    {isLocked() ? (
+                      <>
+                        🏆 {player.champion ? `${FLAGS[player.champion] || ''} ${player.champion}` : '—'}
+                        &nbsp;|&nbsp; ⚽ {player.golden_boot || '—'}
+                      </>
+                    ) : (
+                      <span className="italic">🔒 picks hidden until deadline</span>
+                    )}
                   </div>
                 </div>
                 <div className="w-32 hidden sm:block">
