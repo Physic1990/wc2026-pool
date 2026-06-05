@@ -5,6 +5,7 @@ import { listMyLeagues } from '../lib/leagues.js'
 import { supabase } from '../supabase.js'
 import { isLocked } from '../lib/deadline.js'
 import DeadlineBanner from '../components/DeadlineBanner.jsx'
+import { FIFA_RANKED_TEAMS } from './Enter.jsx'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -137,8 +138,84 @@ export default function Dashboard() {
           </Link>
         </div>
       </Section>
+
+      {/* FIFA Rankings */}
+      <Section title="🌍 FIFA Rankings — WC 2026 Teams">
+        <div className="bg-grass/10 border border-grass rounded-xl p-3 space-y-2">
+          <p className="text-xs text-muted font-mono">Official FIFA Men's World Ranking · April 2026 · Used for 🐴 Dark Horse picks</p>
+          <p className="text-xs text-muted font-mono">The <strong className="text-lime">Dark Horse bonus</strong> = pick the lowest-ranked team (highest FIFA #) to reach the Quarterfinals. If New Zealand (FIFA #86) somehow made the QF, anyone who picked them gets 3 pts!</p>
+        </div>
+        <FIFARankingsTable />
+      </Section>
     </div>
   )
+}
+
+function FIFARankingsTable() {
+  const [open, setOpen] = useState(false)
+  const top10 = FIFA_RANKED_TEAMS.slice(0, 10)
+  const rest  = FIFA_RANKED_TEAMS.slice(10)
+  return (
+    <div className="bg-grass/10 border border-grass rounded-xl overflow-hidden">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-grass text-muted font-mono text-xs uppercase">
+            <th className="text-left px-4 py-2">FIFA Rank</th>
+            <th className="text-left px-4 py-2">Team</th>
+            <th className="text-left px-4 py-2 hidden sm:table-cell">Confederation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {top10.map((t, i) => (
+            <RankRow key={t.name} t={t} i={i} />
+          ))}
+          {open && rest.map((t, i) => (
+            <RankRow key={t.name} t={t} i={i + 10} />
+          ))}
+        </tbody>
+      </table>
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full py-2.5 text-xs font-mono text-muted hover:text-lime border-t border-grass transition-colors"
+      >
+        {open ? '▲ Show less' : `▼ Show all ${FIFA_RANKED_TEAMS.length} teams`}
+      </button>
+    </div>
+  )
+}
+
+function RankRow({ t, i }) {
+  const isDarkHorse = t.fifaRank >= 60
+  return (
+    <tr className={`border-b border-grass/30 ${isDarkHorse ? 'bg-yellow-900/10' : i % 2 === 0 ? '' : 'bg-grass/5'}`}>
+      <td className="px-4 py-2 font-mono font-bold">
+        <span className={isDarkHorse ? 'text-yellow-400' : 'text-lime'}>#{t.fifaRank}</span>
+      </td>
+      <td className="px-4 py-2 font-medium">
+        {t.name}
+        {isDarkHorse && <span className="ml-2 text-[10px] text-yellow-400 font-mono">🐴 dark horse</span>}
+      </td>
+      <td className="px-4 py-2 text-xs text-muted font-mono hidden sm:table-cell">
+        {confed(t.name)}
+      </td>
+    </tr>
+  )
+}
+
+function confed(name) {
+  const UEFA = ['France','Spain','England','Portugal','Netherlands','Germany','Croatia','Belgium','Switzerland','Norway','Austria','Scotland','Sweden','Czechia','Bosnia and Herzegovina','Türkiye']
+  const CONMEBOL = ['Argentina','Brazil','Colombia','Uruguay','Ecuador','Paraguay']
+  const CAF = ['Morocco','Senegal','Egypt','Algeria',"Côte d'Ivoire",'Tunisia','South Africa','Ghana','Cabo Verde','Congo DR']
+  const AFC = ['Japan','IR Iran','Korea Republic','Australia','Saudi Arabia','Qatar','Jordan','Uzbekistan','Iraq']
+  const CONCACAF = ['USA','Mexico','Canada','Panama','Curaçao','Haiti']
+  const OFC = ['New Zealand']
+  if (UEFA.includes(name)) return 'UEFA'
+  if (CONMEBOL.includes(name)) return 'CONMEBOL'
+  if (CAF.includes(name)) return 'CAF'
+  if (AFC.includes(name)) return 'AFC'
+  if (CONCACAF.includes(name)) return 'CONCACAF'
+  if (OFC.includes(name)) return 'OFC'
+  return '—'
 }
 
 function Section({ title, children }) {

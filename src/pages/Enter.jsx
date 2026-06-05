@@ -14,58 +14,59 @@ import { flagFor } from '../data/flags.js'
 
 const STEP_LABELS = ['Name', 'Groups', 'R32', 'R16', 'QF', 'SF', 'Final & Bonuses']
 
-// FIFA composite ranking of WC 2026 teams (source: Christian Dietmeyer's composite — betting odds + Elo)
-// Ordered #1 (strongest) → #48 (weakest/biggest dark horse)
-const FIFA_RANKED_TEAMS = [
-  { name: 'Spain' },
-  { name: 'France' },
-  { name: 'England' },
-  { name: 'Brazil' },
-  { name: 'Argentina' },
-  { name: 'Portugal' },
-  { name: 'Germany' },
-  { name: 'Netherlands' },
-  { name: 'Norway' },
-  { name: 'Colombia' },
-  { name: 'Belgium' },
-  { name: 'Japan' },
-  { name: 'Morocco' },
-  { name: 'Uruguay' },
-  { name: 'USA' },
-  { name: 'Switzerland' },
-  { name: 'Mexico' },
-  { name: 'Ecuador' },
-  { name: 'Croatia' },
-  { name: 'Türkiye' },
-  { name: 'Senegal' },
-  { name: 'Sweden' },
-  { name: 'Austria' },
-  { name: 'Paraguay' },
-  { name: 'Canada' },
-  { name: "Côte d'Ivoire" },
-  { name: 'Scotland' },
-  { name: 'Korea Republic' },
-  { name: 'Czechia' },
-  { name: 'Egypt' },
-  { name: 'Bosnia and Herzegovina' },
-  { name: 'Ghana' },
-  { name: 'Australia' },
-  { name: 'IR Iran' },
-  { name: 'Algeria' },
-  { name: 'Tunisia' },
-  { name: 'South Africa' },
-  { name: 'Congo DR' },
-  { name: 'Iraq' },
-  { name: 'Saudi Arabia' },
-  { name: 'Qatar' },
-  { name: 'Cabo Verde' },
-  { name: 'Haiti' },
-  { name: 'Curaçao' },
-  { name: 'Panama' },
-  { name: 'Uzbekistan' },
-  { name: 'Jordan' },
-  { name: 'New Zealand' },
-]
+// Official FIFA Men's World Ranking (April 2026) — WC 2026 qualified teams only
+// Ordered by FIFA rank (lowest number = strongest/favourite)
+export const FIFA_RANKED_TEAMS = [
+  { name: 'France',                 fifaRank: 1  },
+  { name: 'Spain',                  fifaRank: 2  },
+  { name: 'Argentina',              fifaRank: 3  },
+  { name: 'England',                fifaRank: 4  },
+  { name: 'Portugal',               fifaRank: 5  },
+  { name: 'Netherlands',            fifaRank: 6  },
+  { name: 'Brazil',                 fifaRank: 7  },
+  { name: 'Morocco',                fifaRank: 8  },
+  { name: 'Belgium',                fifaRank: 9  },
+  { name: 'Germany',                fifaRank: 10 },
+  { name: 'Croatia',                fifaRank: 11 },
+  { name: 'Colombia',               fifaRank: 13 },
+  { name: 'Senegal',                fifaRank: 14 },
+  { name: 'Mexico',                 fifaRank: 15 },
+  { name: 'USA',                    fifaRank: 16 },
+  { name: 'Uruguay',                fifaRank: 17 },
+  { name: 'Japan',                  fifaRank: 18 },
+  { name: 'Switzerland',            fifaRank: 19 },
+  { name: 'IR Iran',                fifaRank: 21 },
+  { name: 'Korea Republic',         fifaRank: 22 },
+  { name: 'Ecuador',                fifaRank: 23 },
+  { name: 'Austria',                fifaRank: 24 },
+  { name: 'Australia',              fifaRank: 26 },
+  { name: 'Canada',                 fifaRank: 27 },
+  { name: 'Norway',                 fifaRank: 29 },
+  { name: 'Panama',                 fifaRank: 30 },
+  { name: 'Egypt',                  fifaRank: 34 },
+  { name: 'Algeria',                fifaRank: 35 },
+  { name: 'Scotland',               fifaRank: 36 },
+  { name: 'Paraguay',               fifaRank: 39 },
+  { name: 'Tunisia',                fifaRank: 40 },
+  { name: "Côte d'Ivoire",          fifaRank: 42 },
+  { name: 'Uzbekistan',             fifaRank: 50 },
+  { name: 'Qatar',                  fifaRank: 51 },
+  { name: 'Saudi Arabia',           fifaRank: 60 },
+  { name: 'South Africa',           fifaRank: 61 },
+  { name: 'Jordan',                 fifaRank: 66 },
+  { name: 'Cabo Verde',             fifaRank: 68 },
+  { name: 'Ghana',                  fifaRank: 72 },
+  { name: 'Curaçao',                fifaRank: 82 },
+  { name: 'Haiti',                  fifaRank: 84 },
+  { name: 'New Zealand',            fifaRank: 86 },
+  // Not in April 2026 top 100 list but qualified:
+  { name: 'Bosnia and Herzegovina', fifaRank: 90 },
+  { name: 'Türkiye',                fifaRank: 38 },
+  { name: 'Sweden',                 fifaRank: 25 },
+  { name: 'Czechia',                fifaRank: 33 },
+  { name: 'Congo DR',               fifaRank: 95 },
+  { name: 'Iraq',                   fifaRank: 88 },
+].sort((a, b) => a.fifaRank - b.fifaRank)
 
 export default function Enter() {
   const { user } = useAuth()
@@ -793,21 +794,24 @@ function FinalStep({
 
         {/* Dark Horse — ranked dropdown */}
         <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2 sm:col-span-2">
-          <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Pick the lowest-ranked team to reach QF+ (3 pts)</div>
-          <p className="text-xs text-muted font-mono">Teams ranked by FIFA composite ranking. Lower rank = bigger upset = dark horse!</p>
+          <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Lowest-ranked team to reach QF (3 pts)</div>
+          <div className="text-xs text-muted font-mono bg-grass/20 rounded-lg p-2 space-y-1">
+            <p>Pick the team with the <strong className="text-lime">lowest FIFA rank</strong> that makes the Quarterfinals.</p>
+            <p>Example: If New Zealand (FIFA #86) somehow reach the QF, anyone who picked them wins 3 pts. The lower the rank you pick, the bigger the upset — but the harder to get right!</p>
+          </div>
           <select
             value={bonuses.dark_horse}
             onChange={(e) => setBonuses((b) => ({ ...b, dark_horse: e.target.value }))}
             className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
           >
             <option value="">— Select a team —</option>
-            {FIFA_RANKED_TEAMS.map((t, i) => (
-              <option key={t.name} value={t.name}>#{i + 1} {t.name}</option>
+            {FIFA_RANKED_TEAMS.map((t) => (
+              <option key={t.name} value={t.name}>FIFA #{t.fifaRank} — {t.name}</option>
             ))}
           </select>
           {bonuses.dark_horse && (
             <div className="text-xs font-mono text-lime">
-              Selected: {bonuses.dark_horse} (#{FIFA_RANKED_TEAMS.findIndex(t => t.name === bonuses.dark_horse) + 1} ranked)
+              ✓ {bonuses.dark_horse} — FIFA #{FIFA_RANKED_TEAMS.find(t => t.name === bonuses.dark_horse)?.fifaRank}
             </div>
           )}
         </div>
