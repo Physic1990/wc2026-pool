@@ -264,6 +264,16 @@ function GroupView({ group, teams, picks, actual, hasResults }) {
           }
 
           const badge = myRank > 0 ? rankBadge[myRank] : null
+
+          // Points earned from this team
+          let pts = null
+          if (hasResults) {
+            if (state === 'correct') pts = myRank === 1 ? 2 : 1  // 1st=2pts, 2nd/3rd=1pt
+            else if (state === 'wrong-rank') pts = 0
+            else if (state === 'wrong-out') pts = 0
+            else pts = null
+          }
+
           const indicator = {
             correct: '✅',
             'wrong-rank': '⚠️',
@@ -278,6 +288,11 @@ function GroupView({ group, teams, picks, actual, hasResults }) {
               <span className="shrink-0 flex items-center gap-0.5">
                 {badge && <span>{badge}</span>}
                 {indicator && <span>{indicator}</span>}
+                {pts !== null && (
+                  <span className={`font-bold font-mono text-[10px] ml-0.5 ${pts > 0 ? 'text-green-300' : 'text-red-400'}`}>
+                    {pts > 0 ? `+${pts}` : '0'}
+                  </span>
+                )}
                 {state === 'unpicked' && <span className="text-[9px] font-mono">OUT</span>}
               </span>
             </div>
@@ -306,9 +321,9 @@ function MatchList({ matches, picks, winners, actualWinners, pts }) {
             <div className="col-span-2 text-xs font-mono text-muted">
               M{m.id}<span className="hidden sm:inline"> · {pts}pt{pts > 1 ? 's' : ''}</span>
             </div>
-            <TeamChip team={teamA} isPicked={myPick === teamA} isCorrect={hasResult && myPick === teamA && actualWinner === teamA} isWrong={hasResult && myPick === teamA && actualWinner !== teamA} className="col-span-4" />
+            <TeamChip team={teamA} isPicked={myPick === teamA} isCorrect={hasResult && myPick === teamA && actualWinner === teamA} isWrong={hasResult && myPick === teamA && actualWinner !== teamA} pts={pts} className="col-span-4" />
             <div className="col-span-1 text-center text-muted text-xs font-mono">vs</div>
-            <TeamChip team={teamB} isPicked={myPick === teamB} isCorrect={hasResult && myPick === teamB && actualWinner === teamB} isWrong={hasResult && myPick === teamB && actualWinner !== teamB} className="col-span-5" />
+            <TeamChip team={teamB} isPicked={myPick === teamB} isCorrect={hasResult && myPick === teamB && actualWinner === teamB} isWrong={hasResult && myPick === teamB && actualWinner !== teamB} pts={pts} className="col-span-5" />
           </div>
         )
       })}
@@ -316,7 +331,7 @@ function MatchList({ matches, picks, winners, actualWinners, pts }) {
   )
 }
 
-function TeamChip({ team, isPicked, isCorrect, isWrong, className = '' }) {
+function TeamChip({ team, isPicked, isCorrect, isWrong, pts, className = '' }) {
   if (!team) {
     return <div className={`${className} text-xs text-muted italic px-2`}>—</div>
   }
@@ -328,7 +343,7 @@ function TeamChip({ team, isPicked, isCorrect, isWrong, className = '' }) {
         : 'border-grass bg-pitch text-muted'}`}>
       <span className="text-sm">{flagFor(team)}</span>
       <span className="truncate flex-1">{team}</span>
-      {isCorrect && <span className="shrink-0">✅</span>}
+      {isCorrect && <span className="shrink-0 flex items-center gap-0.5">✅ <span className="text-green-300 font-bold font-mono">+{pts}</span></span>}
       {isWrong   && <span className="shrink-0">❌</span>}
       {isPicked && !isCorrect && !isWrong && <span className="shrink-0 text-xs">✓</span>}
     </div>
