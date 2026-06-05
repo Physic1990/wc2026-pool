@@ -210,24 +210,24 @@ function MatchCard({ match }) {
         </div>
 
         {/* Teams & score */}
-        <div className="flex-1 flex items-center justify-between gap-2">
-          <span className={`font-bold text-sm flex-1 ${homeWin ? 'text-lime' : 'text-white'}`}>
+        <div className="flex-1 flex items-center justify-between gap-1 sm:gap-2 min-w-0">
+          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate ${homeWin ? 'text-lime' : 'text-white'}`}>
             {match.homeTeam}
           </span>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 px-1">
             {isFinished || isLive ? (
-              <span className="font-display text-xl tracking-widest">
+              <span className="font-display text-lg sm:text-xl tracking-widest">
                 <span className={homeWin ? 'text-lime' : 'text-white'}>{match.homeScore}</span>
                 <span className="text-muted mx-1">–</span>
                 <span className={awayWin ? 'text-lime' : 'text-white'}>{match.awayScore}</span>
               </span>
             ) : (
-              <span className="text-muted font-mono text-sm">vs</span>
+              <span className="text-muted font-mono text-xs sm:text-sm">vs</span>
             )}
           </div>
 
-          <span className={`font-bold text-sm flex-1 text-right ${awayWin ? 'text-lime' : 'text-white'}`}>
+          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate text-right ${awayWin ? 'text-lime' : 'text-white'}`}>
             {match.awayTeam}
           </span>
         </div>
@@ -249,16 +249,11 @@ function MatchCard({ match }) {
 
       {/* Venue + time bar */}
       {match.venue && (
-        <div className="px-5 pb-2 flex items-center gap-3 text-xs text-muted font-mono">
+        <div className="px-4 pb-2 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted font-mono">
           <span>🏟 {match.venue.stadium}</span>
-          <span>·</span>
-          <span>📍 {match.venue.city}, {match.venue.country}</span>
-          {isScheduled && (
-            <>
-              <span>·</span>
-              <span>🕐 {formatTime(match.utcDate)} local</span>
-            </>
-          )}
+          <span className="hidden sm:inline">·</span>
+          <span>📍 {match.venue.city}</span>
+          {isScheduled && <span>🕐 {formatTime(match.utcDate)}</span>}
         </div>
       )}
 

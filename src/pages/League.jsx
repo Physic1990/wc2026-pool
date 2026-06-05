@@ -225,15 +225,15 @@ export default function League() {
 
       {/* Stats bar */}
       {ranked.length > 0 && (
-        <div className="grid grid-cols-3 gap-3 max-w-3xl mx-auto">
+        <div className="grid grid-cols-3 gap-2 max-w-3xl mx-auto">
           {[
             { label: 'Leader',    value: ranked[0]?.name,                                                       sub: `${ranked[0]?.total} pts` },
             { label: 'Avg Score', value: Math.round(ranked.reduce((s, e) => s + e.total, 0) / ranked.length), sub: 'points' },
             { label: 'Players',   value: ranked.length,                                                          sub: noEntries ? `(${noEntries} pending)` : 'all in' },
           ].map(({ label, value, sub }) => (
-            <div key={label} className="bg-grass/30 border border-grass rounded-xl p-4 text-center">
-              <div className="text-muted text-xs uppercase tracking-widest font-mono mb-1">{label}</div>
-              <div className="font-display text-2xl text-lime">{value}</div>
+            <div key={label} className="bg-grass/30 border border-grass rounded-xl p-3 text-center">
+              <div className="text-muted text-[10px] uppercase tracking-widest font-mono mb-1">{label}</div>
+              <div className="font-display text-xl text-lime truncate">{value}</div>
               <div className="text-muted text-xs">{sub}</div>
             </div>
           ))}
@@ -263,16 +263,16 @@ export default function League() {
             >
               <button
                 onClick={() => setExpanded(isOpen ? null : player.user_id)}
-                className="w-full flex items-center gap-4 p-4 text-left hover:bg-grass/20 transition-colors"
+                className="w-full flex items-center gap-2 sm:gap-4 p-3 sm:p-4 text-left hover:bg-grass/20 transition-colors"
               >
-                <div className="w-10 text-center">
+                <div className="w-8 sm:w-10 text-center shrink-0">
                   {i < 3
-                    ? <span className="text-2xl">{MEDAL[i]}</span>
-                    : <span className="font-display text-2xl text-muted">{i + 1}</span>}
+                    ? <span className="text-xl sm:text-2xl">{MEDAL[i]}</span>
+                    : <span className="font-display text-xl sm:text-2xl text-muted">{i + 1}</span>}
                 </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-lg flex items-center gap-2">
-                    {player.name}
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-base sm:text-lg flex items-center gap-2 flex-wrap">
+                    <span className="truncate">{player.name}</span>
                     {isMe && <span className="text-xs font-mono text-lime border border-lime rounded px-1.5">YOU</span>}
                   </div>
                   <div className="text-xs text-muted font-mono">
@@ -285,8 +285,8 @@ export default function League() {
                     <div className="h-full bg-lime rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
-                <div className="text-right min-w-[60px]">
-                  <div className="font-display text-3xl text-lime">{player.total}</div>
+                <div className="text-right shrink-0">
+                  <div className="font-display text-2xl sm:text-3xl text-lime">{player.total}</div>
                   <div className="text-xs text-muted">pts</div>
                 </div>
                 <div className="text-muted text-sm">{isOpen ? '▲' : '▼'}</div>
