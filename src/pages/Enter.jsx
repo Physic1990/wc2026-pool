@@ -14,6 +14,59 @@ import { flagFor } from '../data/flags.js'
 
 const STEP_LABELS = ['Name', 'Groups', 'R32', 'R16', 'QF', 'SF', 'Final & Bonuses']
 
+// FIFA composite ranking of WC 2026 teams (source: Christian Dietmeyer's composite — betting odds + Elo)
+// Ordered #1 (strongest) → #48 (weakest/biggest dark horse)
+const FIFA_RANKED_TEAMS = [
+  { name: 'Spain' },
+  { name: 'France' },
+  { name: 'England' },
+  { name: 'Brazil' },
+  { name: 'Argentina' },
+  { name: 'Portugal' },
+  { name: 'Germany' },
+  { name: 'Netherlands' },
+  { name: 'Norway' },
+  { name: 'Colombia' },
+  { name: 'Belgium' },
+  { name: 'Japan' },
+  { name: 'Morocco' },
+  { name: 'Uruguay' },
+  { name: 'USA' },
+  { name: 'Switzerland' },
+  { name: 'Mexico' },
+  { name: 'Ecuador' },
+  { name: 'Croatia' },
+  { name: 'Türkiye' },
+  { name: 'Senegal' },
+  { name: 'Sweden' },
+  { name: 'Austria' },
+  { name: 'Paraguay' },
+  { name: 'Canada' },
+  { name: "Côte d'Ivoire" },
+  { name: 'Scotland' },
+  { name: 'Korea Republic' },
+  { name: 'Czechia' },
+  { name: 'Egypt' },
+  { name: 'Bosnia and Herzegovina' },
+  { name: 'Ghana' },
+  { name: 'Australia' },
+  { name: 'IR Iran' },
+  { name: 'Algeria' },
+  { name: 'Tunisia' },
+  { name: 'South Africa' },
+  { name: 'Congo DR' },
+  { name: 'Iraq' },
+  { name: 'Saudi Arabia' },
+  { name: 'Qatar' },
+  { name: 'Cabo Verde' },
+  { name: 'Haiti' },
+  { name: 'Curaçao' },
+  { name: 'Panama' },
+  { name: 'Uzbekistan' },
+  { name: 'Jordan' },
+  { name: 'New Zealand' },
+]
+
 export default function Enter() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -725,7 +778,6 @@ function FinalStep({
           { key: 'golden_boot',  label: '🥇 Golden Boot — Top Scorer' },
           { key: 'golden_glove', label: '🧤 Golden Glove — Best Keeper' },
           { key: 'golden_ball',  label: '⭐ Golden Ball — Best Player' },
-          { key: 'dark_horse',   label: '🐴 Dark Horse — Lowest ranked team in QF+' },
         ].map(({ key, label }) => (
           <div key={key} className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2">
             <div className="font-mono text-xs text-muted uppercase tracking-wider">{label}</div>
@@ -733,11 +785,32 @@ function FinalStep({
               type="text"
               value={bonuses[key]}
               onChange={(e) => setBonuses((b) => ({ ...b, [key]: e.target.value }))}
-              placeholder={key === 'dark_horse' ? 'Team name...' : 'Player name...'}
+              placeholder="Player name..."
               className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
             />
           </div>
         ))}
+
+        {/* Dark Horse — ranked dropdown */}
+        <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2 sm:col-span-2">
+          <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Pick the lowest-ranked team to reach QF+ (3 pts)</div>
+          <p className="text-xs text-muted font-mono">Teams ranked by FIFA composite ranking. Lower rank = bigger upset = dark horse!</p>
+          <select
+            value={bonuses.dark_horse}
+            onChange={(e) => setBonuses((b) => ({ ...b, dark_horse: e.target.value }))}
+            className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
+          >
+            <option value="">— Select a team —</option>
+            {FIFA_RANKED_TEAMS.map((t, i) => (
+              <option key={t.name} value={t.name}>#{i + 1} {t.name}</option>
+            ))}
+          </select>
+          {bonuses.dark_horse && (
+            <div className="text-xs font-mono text-lime">
+              Selected: {bonuses.dark_horse} (#{FIFA_RANKED_TEAMS.findIndex(t => t.name === bonuses.dark_horse) + 1} ranked)
+            </div>
+          )}
+        </div>
       </div>
 
       {error && (
