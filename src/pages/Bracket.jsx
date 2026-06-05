@@ -181,8 +181,8 @@ export default function Bracket() {
       <Section title="⚔️ Semifinals" hint="5 pts per correct winner">
         <MatchList matches={SF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={5} />
       </Section>
-      <Section title="🏆 Final" hint="14 pts for correct champion">
-        <MatchList matches={[FINAL_MATCH]} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={14} />
+      <Section title="🏆 Final" hint="8 pts for correct champion">
+        <MatchList matches={[FINAL_MATCH]} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={8} />
       </Section>
 
       {/* Bonuses */}

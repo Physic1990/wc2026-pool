@@ -55,7 +55,7 @@ export default function HowItWorks() {
               ['Round of 16 winner',  '2 pts × 8 matches  = 16 pts'],
               ['Quarterfinal winner', '3 pts × 4 matches  = 12 pts'],
               ['Semifinal winner',    '5 pts × 2 matches  = 10 pts'],
-              ['Champion',            '14 pts × 1 match   = 14 pts'],
+              ['Champion',            '8 pts × 1 match    = 8 pts'],
             ]}
           />
           <SubTable

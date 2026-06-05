@@ -97,15 +97,15 @@ export const SCORING = {
   R16: 2,
   QF: 3,
   SF: 5,
-  Final: 14,                 // = champion (14 pts, bigger reward for the winner)
+  Final: 8,                  // = champion
   golden_boot: 3,
   golden_glove: 3,
   golden_ball: 3,
   dark_horse: 3,
 }
 
-// Theoretical max: 12*(2+1+1) + 8*1 + 16*1 + 8*2 + 4*3 + 2*5 + 14 + 4*3 = 136
-export const MAX_POSSIBLE = 136
+// Theoretical max: 12*(2+1+1) + 8*1 + 16*1 + 8*2 + 4*3 + 2*5 + 8 + 4*3 = 130
+export const MAX_POSSIBLE = 130
 
 // ---------------------------------------------------------------------------
 // Bracket helpers: given an entry (or a results object), figure out which two
