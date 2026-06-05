@@ -794,7 +794,7 @@ function FinalStep({
 
         {/* Dark Horse — ranked dropdown */}
         <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2 sm:col-span-2">
-          <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Lowest-ranked team to reach QF (3 pts)</div>
+          <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Lowest-ranked team in QF+ (3 pts)</div>
           <div className="text-xs text-muted font-mono bg-grass/20 rounded-lg p-2 space-y-1">
             <p>Pick the team with the <strong className="text-lime">lowest FIFA rank</strong> that makes the Quarterfinals.</p>
             <p>Example: If New Zealand (FIFA #86) somehow reach the QF, anyone who picked them wins 3 pts. The lower the rank you pick, the bigger the upset — but the harder to get right!</p>

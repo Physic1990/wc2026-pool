@@ -143,7 +143,7 @@ export default function Dashboard() {
       <Section title="🌍 FIFA Rankings — WC 2026 Teams">
         <div className="bg-grass/10 border border-grass rounded-xl p-3 space-y-2">
           <p className="text-xs text-muted font-mono">Official FIFA Men's World Ranking · April 2026 · Used for 🐴 Dark Horse picks</p>
-          <p className="text-xs text-muted font-mono">The <strong className="text-lime">Dark Horse bonus</strong> = pick the lowest-ranked team (highest FIFA #) to reach the Quarterfinals. If New Zealand (FIFA #86) somehow made the QF, anyone who picked them gets 3 pts!</p>
+          <p className="text-xs text-muted font-mono">The <strong className="text-lime">🐴 Dark Horse bonus</strong> = pick the lowest-ranked team in QF+. If New Zealand (FIFA #86) somehow made the QF, anyone who picked them gets 3 pts!</p>
         </div>
         <FIFARankingsTable />
       </Section>
