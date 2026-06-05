@@ -160,7 +160,7 @@ export default function Bracket() {
       )}
 
       {/* Group picks */}
-      <Section title="📋 Group Stage">
+      <Section title="📋 Group Stage" hint="1st = 2pts · 2nd = 1pt · Both correct = +1 bonus">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {GROUP_LABELS.map((g) => (
             <GroupView key={g} group={g} teams={GROUPS[g]} picks={entry.group_picks?.[g] || {}} actual={results.groups?.[g] || {}} hasResults={!!results.groups?.[g]} />
@@ -169,24 +169,24 @@ export default function Bracket() {
       </Section>
 
       {/* Knockout rounds */}
-      <Section title="⚔️ Round of 32">
+      <Section title="⚔️ Round of 32" hint="1 pt per correct winner">
         <MatchList matches={R32_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={1} />
       </Section>
-      <Section title="⚔️ Round of 16">
+      <Section title="⚔️ Round of 16" hint="2 pts per correct winner">
         <MatchList matches={R16_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={2} />
       </Section>
-      <Section title="⚔️ Quarterfinals">
+      <Section title="⚔️ Quarterfinals" hint="3 pts per correct winner">
         <MatchList matches={QF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={3} />
       </Section>
-      <Section title="⚔️ Semifinals">
+      <Section title="⚔️ Semifinals" hint="5 pts per correct winner">
         <MatchList matches={SF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={5} />
       </Section>
-      <Section title="🏆 Final">
-        <MatchList matches={[FINAL_MATCH]} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={8} />
+      <Section title="🏆 Final" hint="14 pts for correct champion">
+        <MatchList matches={[FINAL_MATCH]} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={14} />
       </Section>
 
       {/* Bonuses */}
-      <Section title="🎖️ Bonus Awards">
+      <Section title="🎖️ Bonus Awards" hint="3 pts each — Golden Boot · Golden Glove · Golden Ball · Dark Horse">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { key: 'golden_boot',  label: '🥇 Golden Boot — Top Scorer' },
@@ -217,10 +217,13 @@ export default function Bracket() {
 }
 
 // ----------------------------------------------------------------------------
-function Section({ title, children }) {
+function Section({ title, hint, children }) {
   return (
     <div className="space-y-3">
-      <h2 className="font-display text-2xl text-lime tracking-wider border-b border-grass pb-2">{title}</h2>
+      <div className="border-b border-grass pb-2 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-display text-2xl text-lime tracking-wider">{title}</h2>
+        {hint && <span className="text-xs font-mono text-muted">{hint}</span>}
+      </div>
       {children}
     </div>
   )
