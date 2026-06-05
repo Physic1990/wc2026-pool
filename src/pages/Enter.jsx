@@ -320,6 +320,7 @@ export default function Enter() {
           setKnockoutPicks={setKnockoutPicks}
           bonuses={bonuses}
           setBonuses={setBonuses}
+          squadPlayers={squadPlayers}
           error={error}
           submitting={submitting}
           canSubmit={canSubmit}
@@ -690,7 +691,7 @@ function ThirdPlaceSlot({
 
 function FinalStep({
   picks, knockoutPicks, setKnockoutPicks,
-  bonuses, setBonuses,
+  bonuses, setBonuses, squadPlayers,
   error, submitting, canSubmit,
   onBack, onSubmit,
 }) {
