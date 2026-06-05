@@ -101,7 +101,10 @@ export default function League() {
     try {
       await deleteLeague(id)
       navigate('/')
-    } catch (e) { setActionError(e.message) }
+    } catch (e) {
+      setActionError(e.message)
+      alert('Delete failed: ' + e.message)
+    }
   }
 
   async function handleRemoveMember(userId, name) {
