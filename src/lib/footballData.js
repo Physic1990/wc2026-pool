@@ -136,3 +136,42 @@ export async function fetchLiveResults() {
 
   return { groups, knockout_picks }
 }
+
+/**
+ * Fetch top scorers for WC 2026.
+ * Returns array of { name, team, goals } sorted by goals desc.
+ */
+export async function fetchTopScorers() {
+  const data = await apiFetch(`/competitions/${WC_CODE}/scorers?season=2026&limit=20`)
+  const scorers = data.scorers || []
+  return scorers.map(s => ({
+    name: s.player?.name || '',
+    team: mapTeam(s.team?.name || ''),
+    goals: s.goals || 0,
+    assists: s.assists || 0,
+  }))
+}
+
+/**
+ * Fetch goal scorers for all finished matches.
+ * Returns array of { matchId, homeTeam, awayTeam, score, goals: [{name, team, minute}] }
+ */
+export async function fetchMatchGoalScorers() {
+  const data = await apiFetch(`/competitions/${WC_CODE}/matches?season=2026&status=FINISHED`)
+  const matches = data.matches || []
+  return matches.map(m => ({
+    matchId: m.id,
+    homeTeam: mapTeam(m.homeTeam.name),
+    awayTeam: mapTeam(m.awayTeam.name),
+    homeScore: m.score.fullTime.home,
+    awayScore: m.score.fullTime.away,
+    stage: m.stage,
+    utcDate: m.utcDate,
+    goals: (m.goals || []).map(g => ({
+      name: g.scorer?.name || '',
+      team: mapTeam(g.team?.name || ''),
+      minute: g.minute,
+      type: g.type, // NORMAL, OWN_GOAL, PENALTY
+    })),
+  }))
+}

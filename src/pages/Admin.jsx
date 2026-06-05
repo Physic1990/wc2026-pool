@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../supabase.js'
-import { fetchLiveResults } from '../lib/footballData.js'
+import { fetchLiveResults, fetchTopScorers, fetchMatchGoalScorers } from '../lib/footballData.js'
 import {
   GROUPS, GROUP_LABELS,
   R32_MATCHES, R16_MATCHES, QF_MATCHES, SF_MATCHES, FINAL_MATCH,
@@ -24,18 +24,27 @@ export default function Admin() {
   const [saved, setSaved] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState('')
+  const [topScorers, setTopScorers] = useState([])
+  const [goalScorers, setGoalScorers] = useState([])
+  const [showGoalScorers, setShowGoalScorers] = useState(false)
 
   async function syncFromAPI() {
     setSyncing(true)
     setSyncMsg('')
     try {
-      const live = await fetchLiveResults()
+      const [live, scorers, goals] = await Promise.all([
+        fetchLiveResults(),
+        fetchTopScorers(),
+        fetchMatchGoalScorers(),
+      ])
       setResults(prev => ({
         ...prev,
         groups: { ...prev.groups, ...live.groups },
         knockout_picks: { ...prev.knockout_picks, ...live.knockout_picks },
       }))
-      setSyncMsg('✅ Synced from football-data.org! Review then click Save.')
+      setTopScorers(scorers)
+      setGoalScorers(goals)
+      setSyncMsg(`✅ Synced! ${scorers.length} scorers, ${goals.length} matches. Review then click Save.`)
     } catch (e) {
       setSyncMsg('❌ Sync failed: ' + e.message)
     }
@@ -184,6 +193,18 @@ export default function Admin() {
       </Section>
 
       <Section title="🎖️ Bonus Awards">
+        {topScorers.length > 0 && (
+          <div className="mb-4 p-3 bg-grass/20 border border-grass rounded-xl">
+            <div className="text-xs text-muted font-mono mb-2">TOP SCORERS (from API)</div>
+            <div className="flex flex-wrap gap-2">
+              {topScorers.slice(0, 10).map((s, i) => (
+                <span key={i} className="text-xs font-mono bg-pitch border border-grass rounded px-2 py-1">
+                  {s.goals}⚽ {s.name} <span className="text-muted">({s.team})</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="grid sm:grid-cols-2 gap-4">
           {[
             { key: 'golden_boot',  label: '🥇 Golden Boot' },
@@ -193,17 +214,64 @@ export default function Admin() {
           ].map(({ key, label }) => (
             <div key={key}>
               <div className="text-sm text-muted font-mono mb-1">{label}</div>
-              <input
-                type="text"
-                value={results[key] || ''}
-                onChange={(e) => setResults((r) => ({ ...r, [key]: e.target.value }))}
-                placeholder={key === 'dark_horse' ? 'Team name...' : 'Player name...'}
-                className="w-full bg-pitch border border-grass rounded-xl px-4 py-2 focus:outline-none focus:border-lime"
-              />
+              {key !== 'dark_horse' && topScorers.length > 0 ? (
+                <select
+                  value={results[key] || ''}
+                  onChange={(e) => setResults((r) => ({ ...r, [key]: e.target.value }))}
+                  className="w-full bg-pitch border border-grass rounded-xl px-4 py-2 focus:outline-none focus:border-lime"
+                >
+                  <option value="">— Select player —</option>
+                  {topScorers.map((s, i) => (
+                    <option key={i} value={s.name}>{s.name} ({s.team}) — {s.goals}⚽</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={results[key] || ''}
+                  onChange={(e) => setResults((r) => ({ ...r, [key]: e.target.value }))}
+                  placeholder={key === 'dark_horse' ? 'Team name...' : 'Player name...'}
+                  className="w-full bg-pitch border border-grass rounded-xl px-4 py-2 focus:outline-none focus:border-lime"
+                />
+              )}
             </div>
           ))}
         </div>
       </Section>
+
+      {goalScorers.length > 0 && (
+        <Section title="⚽ Goal Scorers by Match">
+          <button
+            onClick={() => setShowGoalScorers(v => !v)}
+            className="mb-4 text-sm text-lime font-mono hover:underline"
+          >
+            {showGoalScorers ? '▼ Hide' : '▶ Show'} {goalScorers.length} matches
+          </button>
+          {showGoalScorers && (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {goalScorers.map((m, i) => (
+                <div key={i} className="bg-pitch border border-grass rounded-xl p-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-bold text-sm">{m.homeTeam} {m.homeScore} – {m.awayScore} {m.awayTeam}</span>
+                    <span className="text-xs text-muted font-mono">{m.stage?.replace(/_/g, ' ')}</span>
+                  </div>
+                  <div className="text-xs font-mono text-muted space-y-0.5">
+                    {m.goals.length === 0 ? (
+                      <span>No goal data</span>
+                    ) : m.goals.map((g, j) => (
+                      <div key={j}>
+                        {g.minute}' {g.name} <span className="text-lime">({g.team})</span>
+                        {g.type === 'OWN_GOAL' && ' (OG)'}
+                        {g.type === 'PENALTY' && ' (P)'}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Section>
+      )}
 
       <button
         onClick={save}
