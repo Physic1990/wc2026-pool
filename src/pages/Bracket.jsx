@@ -163,26 +163,26 @@ export default function Bracket() {
       <Section title="📋 Group Stage">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {GROUP_LABELS.map((g) => (
-            <GroupView key={g} group={g} teams={GROUPS[g]} picks={entry.group_picks?.[g] || {}} />
+            <GroupView key={g} group={g} teams={GROUPS[g]} picks={entry.group_picks?.[g] || {}} actual={results.groups?.[g] || {}} hasResults={!!results.groups?.[g]} />
           ))}
         </div>
       </Section>
 
       {/* Knockout rounds */}
       <Section title="⚔️ Round of 32">
-        <MatchList matches={R32_MATCHES} picks={picks} winners={entry.knockout_picks || {}} pts={1} />
+        <MatchList matches={R32_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={1} />
       </Section>
       <Section title="⚔️ Round of 16">
-        <MatchList matches={R16_MATCHES} picks={picks} winners={entry.knockout_picks || {}} pts={2} />
+        <MatchList matches={R16_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={2} />
       </Section>
       <Section title="⚔️ Quarterfinals">
-        <MatchList matches={QF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} pts={3} />
+        <MatchList matches={QF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={3} />
       </Section>
       <Section title="⚔️ Semifinals">
-        <MatchList matches={SF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} pts={5} />
+        <MatchList matches={SF_MATCHES} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={5} />
       </Section>
       <Section title="🏆 Final">
-        <MatchList matches={[FINAL_MATCH]} picks={picks} winners={entry.knockout_picks || {}} pts={8} />
+        <MatchList matches={[FINAL_MATCH]} picks={picks} winners={entry.knockout_picks || {}} actualWinners={results.knockout_picks || {}} pts={8} />
       </Section>
 
       {/* Bonuses */}
@@ -193,12 +193,23 @@ export default function Bracket() {
             { key: 'golden_glove', label: '🧤 Golden Glove — Best Keeper' },
             { key: 'golden_ball',  label: '⭐ Golden Ball — Best Player' },
             { key: 'dark_horse',   label: '🐴 Dark Horse Team' },
-          ].map(({ key, label }) => (
-            <div key={key} className="bg-grass/20 border border-grass rounded-xl p-4">
+          ].map(({ key, label }) => {
+            const myPick = entry[key] || ''
+            const actual = results[key] || ''
+            const isKnown = !!actual
+            const isCorrect = isKnown && myPick && myPick === actual
+            const isWrong = isKnown && myPick && myPick !== actual
+            return (
+            <div key={key} className={`border rounded-xl p-4 ${isCorrect ? 'bg-green-900/20 border-green-600' : isWrong ? 'bg-red-900/20 border-red-700' : 'bg-grass/20 border-grass'}`}>
               <div className="text-xs font-mono text-muted uppercase tracking-wider">{label}</div>
-              <div className="text-lg text-lime mt-1">{entry[key] || <span className="text-muted italic">— not picked —</span>}</div>
+              <div className="flex items-center justify-between mt-1">
+                <div className="text-lg text-lime">{myPick || <span className="text-muted italic">— not picked —</span>}</div>
+                {isCorrect && <span className="text-green-400 text-lg">✅</span>}
+                {isWrong && <div className="text-right"><span className="text-red-400 text-lg">❌</span><div className="text-xs text-muted font-mono">→ {actual}</div></div>}
+              </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       </Section>
     </div>
@@ -215,60 +226,89 @@ function Section({ title, children }) {
   )
 }
 
-function GroupView({ group, teams, picks }) {
-  const rankFor = (team) => {
-    if (picks?.first  === team) return 1
-    if (picks?.second === team) return 2
-    if (picks?.third  === team) return 3
+function GroupView({ group, teams, picks, actual, hasResults }) {
+  const rankFor = (obj, team) => {
+    if (obj?.first  === team) return 1
+    if (obj?.second === team) return 2
+    if (obj?.third  === team) return 3
     return 0
   }
   const rankBadge = { 1: '🥇', 2: '🥈', 3: '🥉' }
-  const rankStyle = {
-    1: 'border-lime bg-lime text-pitch',
-    2: 'border-gold bg-gold/30 text-gold',
-    3: 'border-orange-400 bg-orange-400/20 text-orange-300',
-  }
+
   return (
     <div className="bg-grass/20 border border-grass rounded-xl p-3">
       <div className="font-display text-lg text-lime mb-2">Group {group}</div>
       <div className="grid grid-cols-2 gap-1.5">
         {teams.map((team) => {
-          const r = rankFor(team)
-          const isFourth = r === 0
+          const myRank = rankFor(picks, team)
+          const actualRank = rankFor(actual, team)
+
+          // Determine result state
+          let state = 'unpicked' // not in top 3 by user
+          if (myRank > 0) {
+            if (!hasResults) state = 'picked'
+            else if (myRank === actualRank) state = 'correct'
+            else if (actualRank > 0) state = 'wrong-rank' // picked to qualify but wrong position
+            else state = 'wrong-out' // picked to qualify but actually out
+          } else if (hasResults && actualRank > 0) {
+            state = 'missed' // user had OUT but they actually qualified
+          }
+
+          const styles = {
+            correct:    'border-green-500 bg-green-900/30 text-green-300',
+            'wrong-rank':'border-yellow-500 bg-yellow-900/20 text-yellow-300',
+            'wrong-out':'border-red-600 bg-red-900/20 text-red-300',
+            missed:     'border-blue-500 bg-blue-900/20 text-blue-300 opacity-80',
+            picked:     myRank === 1 ? 'border-lime bg-lime text-pitch' : myRank === 2 ? 'border-yellow-400 bg-yellow-400/20 text-yellow-300' : 'border-orange-400 bg-orange-400/20 text-orange-300',
+            unpicked:   'border-grass/40 bg-pitch/30 text-muted opacity-50 line-through',
+          }
+
+          const badge = myRank > 0 ? rankBadge[myRank] : null
+          const indicator = {
+            correct: '✅',
+            'wrong-rank': '⚠️',
+            'wrong-out': '❌',
+            missed: '↑',
+          }[state]
+
           return (
-            <div
-              key={team}
-              className={`flex items-center gap-2 px-2 py-1.5 rounded-lg border-2 text-xs
-                ${r ? rankStyle[r]
-                  : 'border-grass/40 bg-pitch/30 text-muted opacity-60 line-through'}`}
-            >
+            <div key={team} className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-2 text-xs ${styles[state]}`}>
               <span className="text-sm">{flagFor(team)}</span>
-              <span className="flex-1">{team}</span>
-              {r > 0
-                ? <span>{rankBadge[r]}</span>
-                : <span className="text-[9px] font-mono">OUT</span>}
+              <span className="flex-1 truncate">{team}</span>
+              <span className="shrink-0 flex items-center gap-0.5">
+                {badge && <span>{badge}</span>}
+                {indicator && <span>{indicator}</span>}
+                {state === 'unpicked' && <span className="text-[9px] font-mono">OUT</span>}
+              </span>
             </div>
           )
         })}
       </div>
+      {hasResults && (
+        <div className="mt-2 text-[10px] font-mono text-muted flex gap-2 flex-wrap">
+          <span>✅ correct</span><span>⚠️ wrong pos</span><span>❌ out</span>
+        </div>
+      )}
     </div>
   )
 }
 
-function MatchList({ matches, picks, winners, pts }) {
+function MatchList({ matches, picks, winners, actualWinners, pts }) {
   return (
     <div className="space-y-1.5">
       {matches.map((m) => {
         const [teamA, teamB] = teamsForMatch(m.id, picks)
-        const w = winners[m.id]
+        const myPick = winners[m.id]
+        const actualWinner = actualWinners[m.id]
+        const hasResult = !!actualWinner
         return (
           <div key={m.id} className="bg-grass/20 border border-grass rounded-lg p-2 grid grid-cols-12 items-center gap-2 text-sm">
             <div className="col-span-2 text-xs font-mono text-muted">
               M{m.id}<span className="hidden sm:inline"> · {pts}pt{pts > 1 ? 's' : ''}</span>
             </div>
-            <TeamChip team={teamA} highlighted={w && w === teamA} className="col-span-4" />
+            <TeamChip team={teamA} isPicked={myPick === teamA} isCorrect={hasResult && myPick === teamA && actualWinner === teamA} isWrong={hasResult && myPick === teamA && actualWinner !== teamA} className="col-span-4" />
             <div className="col-span-1 text-center text-muted text-xs font-mono">vs</div>
-            <TeamChip team={teamB} highlighted={w && w === teamB} className="col-span-5" />
+            <TeamChip team={teamB} isPicked={myPick === teamB} isCorrect={hasResult && myPick === teamB && actualWinner === teamB} isWrong={hasResult && myPick === teamB && actualWinner !== teamB} className="col-span-5" />
           </div>
         )
       })}
@@ -276,16 +316,21 @@ function MatchList({ matches, picks, winners, pts }) {
   )
 }
 
-function TeamChip({ team, highlighted, className = '' }) {
+function TeamChip({ team, isPicked, isCorrect, isWrong, className = '' }) {
   if (!team) {
     return <div className={`${className} text-xs text-muted italic px-2`}>—</div>
   }
   return (
-    <div className={`${className} flex items-center gap-2 px-2 py-1.5 rounded border
-      ${highlighted ? 'border-lime bg-lime text-pitch font-bold' : 'border-grass bg-pitch'}`}>
-      <span className="text-base">{flagFor(team)}</span>
-      <span className="truncate">{team}</span>
-      {highlighted && <span className="ml-auto text-xs">✓</span>}
+    <div className={`${className} flex items-center gap-1.5 px-2 py-1.5 rounded border text-xs
+      ${isCorrect ? 'border-green-500 bg-green-900/30 text-green-300 font-bold'
+        : isWrong  ? 'border-red-600 bg-red-900/20 text-red-300'
+        : isPicked ? 'border-lime bg-lime text-pitch font-bold'
+        : 'border-grass bg-pitch text-muted'}`}>
+      <span className="text-sm">{flagFor(team)}</span>
+      <span className="truncate flex-1">{team}</span>
+      {isCorrect && <span className="shrink-0">✅</span>}
+      {isWrong   && <span className="shrink-0">❌</span>}
+      {isPicked && !isCorrect && !isWrong && <span className="shrink-0 text-xs">✓</span>}
     </div>
   )
 }
