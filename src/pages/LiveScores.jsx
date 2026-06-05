@@ -232,17 +232,35 @@ function MatchCard({ match }) {
           </span>
         </div>
 
-        {/* Stage label */}
-        <div className="w-20 shrink-0 text-right">
-          <span className="text-xs text-muted font-mono">
+        {/* Stage + venue */}
+        <div className="shrink-0 text-right hidden sm:block">
+          <div className="text-xs text-muted font-mono">
             {match.stage === 'GROUP_STAGE' ? `MD ${match.matchday}` : STAGE_LABEL[match.stage] || ''}
-          </span>
+          </div>
+          {match.venue && (
+            <div className="text-xs text-muted font-mono">{match.venue.city}</div>
+          )}
         </div>
 
         {isFinished && (
           <span className="text-muted text-xs ml-1">{open ? '▲' : '▼'}</span>
         )}
       </button>
+
+      {/* Venue + time bar */}
+      {match.venue && (
+        <div className="px-5 pb-2 flex items-center gap-3 text-xs text-muted font-mono">
+          <span>🏟 {match.venue.stadium}</span>
+          <span>·</span>
+          <span>📍 {match.venue.city}, {match.venue.country}</span>
+          {isScheduled && (
+            <>
+              <span>·</span>
+              <span>🕐 {formatTime(match.utcDate)} local</span>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Goal scorers expanded */}
       {open && isFinished && (

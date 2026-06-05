@@ -5,6 +5,132 @@
 
 const WC_CODE = 'WC'
 
+// Official WC 2026 venue data (API returns null for venue)
+export const MATCH_VENUES = {
+  // Group A
+  537327: { stadium: 'Estadio Azteca',              city: 'Mexico City',      country: 'MEX' },
+  537328: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537329: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537330: { stadium: "Levi's Stadium",              city: 'Santa Clara',      country: 'USA' },
+  537331: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537332: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  // Group B
+  537333: { stadium: 'BC Place',                    city: 'Vancouver',        country: 'CAN' },
+  537334: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537335: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537336: { stadium: 'BMO Field',                   city: 'Toronto',          country: 'CAN' },
+  537337: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537338: { stadium: 'Lincoln Financial Field',     city: 'Philadelphia',     country: 'USA' },
+  // Group C
+  537339: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537340: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  537341: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537342: { stadium: 'Gillette Stadium',            city: 'Foxborough',       country: 'USA' },
+  537343: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537344: { stadium: 'Lincoln Financial Field',     city: 'Philadelphia',     country: 'USA' },
+  // Group D
+  537345: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537346: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537347: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537348: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537349: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537350: { stadium: 'Lincoln Financial Field',     city: 'Philadelphia',     country: 'USA' },
+  // Group E
+  537351: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537352: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537353: { stadium: "Levi's Stadium",              city: 'Santa Clara',      country: 'USA' },
+  537354: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  537355: { stadium: 'Lumen Field',                 city: 'Seattle',          country: 'USA' },
+  537356: { stadium: 'Gillette Stadium',            city: 'Foxborough',       country: 'USA' },
+  // Group F
+  537357: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537358: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537359: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537360: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537361: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537362: { stadium: "Levi's Stadium",              city: 'Santa Clara',      country: 'USA' },
+  // Group G
+  537363: { stadium: 'Lumen Field',                 city: 'Seattle',          country: 'USA' },
+  537364: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  537365: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537366: { stadium: 'BC Place',                    city: 'Vancouver',        country: 'CAN' },
+  537367: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537368: { stadium: 'Lincoln Financial Field',     city: 'Philadelphia',     country: 'USA' },
+  // Group H
+  537369: { stadium: 'BC Place',                    city: 'Vancouver',        country: 'CAN' },
+  537370: { stadium: 'Estadio BBVA',                city: 'Monterrey',        country: 'MEX' },
+  537371: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537372: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537373: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537374: { stadium: 'Gillette Stadium',            city: 'Foxborough',       country: 'USA' },
+  // Group I
+  537391: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537392: { stadium: 'Estadio Akron',               city: 'Guadalajara',      country: 'MEX' },
+  537393: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537394: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537395: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  537396: { stadium: 'Lumen Field',                 city: 'Seattle',          country: 'USA' },
+  // Group J
+  537397: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537398: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537399: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537400: { stadium: "Levi's Stadium",              city: 'Santa Clara',      country: 'USA' },
+  537401: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  537402: { stadium: 'BC Place',                    city: 'Vancouver',        country: 'CAN' },
+  // Group K
+  537403: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537404: { stadium: 'Gillette Stadium',            city: 'Foxborough',       country: 'USA' },
+  537405: { stadium: 'Lumen Field',                 city: 'Seattle',          country: 'USA' },
+  537406: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537407: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537408: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  // Group L
+  537409: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537410: { stadium: 'Lincoln Financial Field',     city: 'Philadelphia',     country: 'USA' },
+  537411: { stadium: 'Lumen Field',                 city: 'Seattle',          country: 'USA' },
+  537412: { stadium: 'BC Place',                    city: 'Vancouver',        country: 'CAN' },
+  537413: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537414: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  // Round of 32
+  537415: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537416: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537417: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537418: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  537419: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537420: { stadium: "Levi's Stadium",              city: 'Santa Clara',      country: 'USA' },
+  537421: { stadium: 'Arrowhead Stadium',           city: 'Kansas City',      country: 'USA' },
+  537422: { stadium: 'BC Place',                    city: 'Vancouver',        country: 'CAN' },
+  537423: { stadium: 'Lincoln Financial Field',     city: 'Philadelphia',     country: 'USA' },
+  537424: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537425: { stadium: 'Mercedes-Benz Stadium',       city: 'Atlanta',          country: 'USA' },
+  537426: { stadium: 'Lumen Field',                 city: 'Seattle',          country: 'USA' },
+  537427: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537428: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537429: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537430: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  // Round of 16
+  537375: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537376: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537377: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537378: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537379: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537380: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537381: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537382: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  // Quarter Finals
+  537383: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537384: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  537385: { stadium: 'SoFi Stadium',                city: 'Los Angeles',      country: 'USA' },
+  537386: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  // Semi Finals
+  537387: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+  537388: { stadium: 'AT&T Stadium',                city: 'Dallas',           country: 'USA' },
+  // Third Place
+  537389: { stadium: 'Hard Rock Stadium',           city: 'Miami',            country: 'USA' },
+  // Final
+  537390: { stadium: 'MetLife Stadium',             city: 'East Rutherford',  country: 'USA' },
+}
+
 // Map football-data.org team names → our app's team names
 const TEAM_NAME_MAP = {
   'Mexico':                     'Mexico',
@@ -164,6 +290,7 @@ export async function fetchMatchGoalScorers() {
     stage: m.stage,
     matchday: m.matchday,
     utcDate: m.utcDate,
+    venue: MATCH_VENUES[m.id] || null,
     goals: (m.goals || []).map(g => ({
       name: g.scorer?.name || '',
       team: mapTeam(g.team?.name || ''),
