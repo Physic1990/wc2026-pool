@@ -15,6 +15,7 @@ import Enter from './pages/Enter.jsx'
 import Bracket from './pages/Bracket.jsx'
 import HowItWorks from './pages/HowItWorks.jsx'
 import Admin from './pages/Admin.jsx'
+import LiveScores from './pages/LiveScores.jsx'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
 
           {/* Public marketing/info routes */}
           <Route path="/how-it-works"     element={<HowItWorks />} />
+          <Route path="/live"             element={<LiveScores />} />
 
           {/* Protected routes */}
           <Route path="/"                 element={<RequireAuth><Dashboard /></RequireAuth>} />
