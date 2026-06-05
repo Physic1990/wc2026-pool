@@ -10,7 +10,8 @@ export default function Navbar() {
   function close() { setMenuOpen(false) }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-grass bg-pitch/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 bg-pitch/95 backdrop-blur-md" style={{borderBottom: '1px solid #0d1f3d', boxShadow: '0 2px 0 0 #c41230'}}>
+
       <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-16 gap-3">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 min-w-0" onClick={close}>

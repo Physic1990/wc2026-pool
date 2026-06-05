@@ -7,31 +7,31 @@
 }
 
 body {
-  background-color: #0a1a0f;
-  color: #e8f5e0;
+  background-color: #04091e;
+  color: #e8eef8;
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
 }
 
-/* Pitch texture background */
+/* WC 2026 diagonal stripe background */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
     repeating-linear-gradient(
-      0deg,
+      135deg,
       transparent,
-      transparent 60px,
-      rgba(255,255,255,0.015) 60px,
-      rgba(255,255,255,0.015) 61px
+      transparent 80px,
+      rgba(245, 200, 66, 0.03) 80px,
+      rgba(245, 200, 66, 0.03) 81px
     ),
     repeating-linear-gradient(
-      90deg,
+      45deg,
       transparent,
-      transparent 60px,
-      rgba(255,255,255,0.015) 60px,
-      rgba(255,255,255,0.015) 61px
+      transparent 80px,
+      rgba(196, 18, 48, 0.02) 80px,
+      rgba(196, 18, 48, 0.02) 81px
     );
   pointer-events: none;
   z-index: 0;
@@ -46,5 +46,5 @@ body::before {
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0a1a0f; }
-::-webkit-scrollbar-thumb { background: #1a3a24; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #04091e; }
+::-webkit-scrollbar-thumb { background: #f5c842; border-radius: 3px; }

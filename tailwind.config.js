@@ -9,12 +9,12 @@ export default {
         mono: ['DM Mono', 'monospace'],
       },
       colors: {
-        pitch: '#0a1a0f',
-        grass: '#1a3a24',
-        lime: '#c8f135',
-        gold: '#f5c842',
-        red: '#e63946',
-        muted: '#4a5e50',
+        pitch: '#04091e',        // deep navy background
+        grass: '#0d1f3d',        // card/border navy
+        lime: '#f5c842',         // gold — primary accent (buttons, headings, active)
+        gold: '#f5c842',         // gold
+        red: '#c41230',          // WC crimson red
+        muted: '#5a7499',        // muted blue-grey text
       },
     },
   },
