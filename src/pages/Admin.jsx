@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { supabase } from '../supabase.js'
-import { fetchLiveResults, fetchTopScorers, fetchMatchGoalScorers } from '../lib/footballData.js'
+import { fetchLiveResults, fetchTopScorers, fetchMatchGoalScorers, fetchSquads } from '../lib/footballData.js'
 import {
   GROUPS, GROUP_LABELS,
   R32_MATCHES, R16_MATCHES, QF_MATCHES, SF_MATCHES, FINAL_MATCH,
@@ -24,9 +24,25 @@ export default function Admin() {
   const [saved, setSaved] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [syncMsg, setSyncMsg] = useState('')
+  const [fetchingSquads, setFetchingSquads] = useState(false)
+  const [squadMsg, setSquadMsg] = useState('')
   const [topScorers, setTopScorers] = useState([])
   const [goalScorers, setGoalScorers] = useState([])
   const [showGoalScorers, setShowGoalScorers] = useState(false)
+
+  async function handleFetchSquads() {
+    setFetchingSquads(true)
+    setSquadMsg('')
+    try {
+      const players = await fetchSquads()
+      // Save to Supabase results table as a special squads key
+      await supabase.from('results').upsert({ id: 1, data: { ...results, _squads: players } })
+      setSquadMsg(`✅ Fetched ${players.length} players from ${[...new Set(players.map(p => p.team))].length} teams. Bracket form will now use real squad data.`)
+    } catch (e) {
+      setSquadMsg('❌ Squad fetch failed: ' + e.message)
+    }
+    setFetchingSquads(false)
+  }
 
   async function syncFromAPI() {
     setSyncing(true)
@@ -128,6 +144,13 @@ export default function Admin() {
         <h1 className="font-display text-4xl text-lime tracking-widest">ADMIN PANEL</h1>
         <div className="flex gap-3 items-center flex-wrap">
           <button
+            onClick={handleFetchSquads}
+            disabled={fetchingSquads}
+            className="px-6 py-2 rounded-xl font-bold bg-purple-700 text-white hover:bg-purple-600 disabled:opacity-50 transition-all"
+          >
+            {fetchingSquads ? '⏳ Fetching...' : '👥 Fetch Squads'}
+          </button>
+          <button
             onClick={syncFromAPI}
             disabled={syncing}
             className="px-6 py-2 rounded-xl font-bold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 transition-all"
@@ -143,11 +166,8 @@ export default function Admin() {
           </button>
         </div>
       </div>
-      {syncMsg && (
-        <div className="text-sm font-mono bg-grass/20 border border-grass rounded-lg p-3">
-          {syncMsg}
-        </div>
-      )}
+      {syncMsg && <div className="text-sm font-mono bg-grass/20 border border-grass rounded-lg p-3">{syncMsg}</div>}
+      {squadMsg && <div className="text-sm font-mono bg-purple-900/20 border border-purple-700 rounded-lg p-3">{squadMsg}</div>}
 
       {/* Group Results */}
       <Section title="📋 Group Stage Results (1st / 2nd / 3rd)">

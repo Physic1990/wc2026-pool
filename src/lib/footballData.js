@@ -299,3 +299,26 @@ export async function fetchMatchGoalScorers() {
     })),
   }))
 }
+
+
+/**
+ * Fetch all WC 2026 squads from football-data.org.
+ * Returns array of { name, team, position } sorted by name.
+ * Position codes: Goalkeeper, Defence, Midfield, Offence
+ */
+export async function fetchSquads() {
+  const data = await apiFetch(`/competitions/${WC_CODE}/teams?season=2026`)
+  const teams = data.teams || []
+  const players = []
+  for (const team of teams) {
+    const teamName = mapTeam(team.name)
+    for (const p of (team.squad || [])) {
+      players.push({
+        name: p.name,
+        team: teamName,
+        pos: p.position === 'Goalkeeper' ? 'GK' : 'F',
+      })
+    }
+  }
+  return players.sort((a, b) => a.name.localeCompare(b.name))
+}

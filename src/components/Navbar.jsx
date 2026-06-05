@@ -31,7 +31,6 @@ export default function Navbar() {
             <>
               <NavLink to="/" current={pathname}>Dashboard</NavLink>
               <NavLink to="/bracket/me" current={pathname}>Bracket</NavLink>
-              <NavLink to="/admin" current={pathname}>Admin</NavLink>
               <button
                 onClick={signOut}
                 className="px-3 py-2 rounded text-xs font-mono text-muted hover:text-lime ml-2"
@@ -71,7 +70,6 @@ export default function Navbar() {
               <MobileLink to="/" current={pathname} onClick={close}>Dashboard</MobileLink>
               <MobileLink to="/enter" current={pathname} onClick={close}>My Bracket</MobileLink>
               <MobileLink to="/bracket/me" current={pathname} onClick={close}>View Bracket</MobileLink>
-              <MobileLink to="/admin" current={pathname} onClick={close}>Admin</MobileLink>
               <button
                 onClick={() => { signOut(); close() }}
                 className="w-full text-left px-4 py-3 rounded-xl text-sm font-mono text-muted hover:text-lime hover:bg-grass/20 transition-colors"

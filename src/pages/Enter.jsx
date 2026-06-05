@@ -12,7 +12,7 @@ import {
 } from '../data/teams.js'
 import { flagFor } from '../data/flags.js'
 import SearchableSelect from '../components/SearchableSelect.jsx'
-import { WC_PLAYERS } from '../data/players.js'
+import { OUTFIELD_PLAYERS, GOALKEEPERS } from '../data/players.js'
 
 const STEP_LABELS = ['Name', 'Groups', 'R32', 'R16', 'QF', 'SF', 'Final & Bonuses']
 
@@ -728,16 +728,16 @@ function FinalStep({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {[
-          { key: 'golden_boot',  label: '🥇 Golden Boot — Top Scorer' },
-          { key: 'golden_glove', label: '🧤 Golden Glove — Best Keeper' },
-          { key: 'golden_ball',  label: '⭐ Golden Ball — Best Player' },
-        ].map(({ key, label }) => (
+          { key: 'golden_boot',  label: '🥇 Golden Boot — Top Scorer',  players: OUTFIELD_PLAYERS },
+          { key: 'golden_glove', label: '🧤 Golden Glove — Best Keeper', players: GOALKEEPERS },
+          { key: 'golden_ball',  label: '⭐ Golden Ball — Best Player',  players: OUTFIELD_PLAYERS },
+        ].map(({ key, label, players }) => (
           <div key={key} className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2">
             <div className="font-mono text-xs text-muted uppercase tracking-wider">{label}</div>
             <SearchableSelect
               value={bonuses[key]}
               onChange={(v) => setBonuses((b) => ({ ...b, [key]: v }))}
-              options={WC_PLAYERS.map(p => ({ value: p.name, label: p.name, sub: p.team }))}
+              options={players.map(p => ({ value: p.name, label: p.name, sub: p.team }))}
               placeholder="Search player..."
             />
           </div>
