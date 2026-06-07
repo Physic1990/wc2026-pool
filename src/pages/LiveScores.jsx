@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchMatchGoalScorers, fetchTopScorers } from '../lib/footballData.js'
+import { flagFor } from '../data/flags.js'
 
 const STAGE_ORDER = [
   'GROUP_STAGE',
@@ -95,9 +96,6 @@ export default function LiveScores() {
           {loading ? '⏳ Loading...' : '🔄 Refresh'}
         </button>
       </div>
-
-      {/* Venue Map */}
-      <VenueMap matches={matches} />
 
       {error && (
         <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 text-sm font-mono text-red-300">
@@ -214,8 +212,9 @@ function MatchCard({ match }) {
 
         {/* Teams & score */}
         <div className="flex-1 flex items-center justify-between gap-1 sm:gap-2 min-w-0">
-          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate ${homeWin ? 'text-lime' : 'text-ink'}`}>
-            {match.homeTeam}
+          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate flex items-center gap-1.5 ${homeWin ? 'text-lime' : 'text-ink'}`}>
+            <span className="text-base shrink-0">{flagFor(match.homeTeam)}</span>
+            <span className="truncate">{match.homeTeam}</span>
           </span>
 
           <div className="flex items-center gap-1 shrink-0 px-1">
@@ -230,8 +229,9 @@ function MatchCard({ match }) {
             )}
           </div>
 
-          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate text-right ${awayWin ? 'text-lime' : 'text-ink'}`}>
-            {match.awayTeam}
+          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate text-right flex items-center justify-end gap-1.5 ${awayWin ? 'text-lime' : 'text-ink'}`}>
+            <span className="truncate">{match.awayTeam}</span>
+            <span className="text-base shrink-0">{flagFor(match.awayTeam)}</span>
           </span>
         </div>
 
