@@ -365,10 +365,11 @@ function NameStep({ name, setName, onNext }) {
 function GroupsStep({ groupPicks, setGroupPicks, canNext, onBack, onNext }) {
   return (
     <div className="space-y-4">
-      <p className="text-sm text-muted font-mono">
-        Click a team to assign the next open rank (🥇 → 🥈 → 🥉). Click again to clear.
-        4th-place is whatever's left and gets eliminated.
-      </p>
+      <div className="rounded-xl px-4 py-3 text-sm font-mono flex items-center gap-3"
+           style={{ background: '#04091e', color: '#7a8fb0' }}>
+        <span className="text-lg">👆</span>
+        <span>Click a team to rank them <strong style={{color:'#f5c842'}}>🥇1st → 🥈2nd → 🥉3rd</strong>. Click again to clear. 4th place is eliminated.</span>
+      </div>
 
       {Object.entries(GROUPS).map(([group, teams]) => (
         <GroupPicker
@@ -411,49 +412,54 @@ function GroupPicker({ group, teams, picked, onChange }) {
     // All ranks full — ignore
   }
 
-  const rankBadge = { 1: '🥇 1st', 2: '🥈 2nd', 3: '🥉 3rd' }
-  const rankStyle = {
-    1: 'border-lime bg-lime text-pitch',
-    2: 'border-gold bg-gold/30 text-gold',
-    3: 'border-orange-400 bg-orange-400/20 text-orange-300',
+  const rankConfig = {
+    1: { badge: '🥇 1st', bg: '#c41230', text: '#ffffff', border: '#c41230' },
+    2: { badge: '🥈 2nd', bg: '#1e3a6e', text: '#ffffff', border: '#1e3a6e' },
+    3: { badge: '🥉 3rd', bg: '#b45309', text: '#ffffff', border: '#b45309' },
   }
 
   return (
-    <div className="bg-grass/20 border border-grass rounded-xl p-4">
-      <div className="flex items-baseline justify-between mb-3">
-        <div className="font-display text-xl text-lime">Group {group}</div>
-        <div className="text-[10px] text-muted font-mono uppercase tracking-wider">
-          Click to rank · Click again to clear
+    <div className="rounded-xl border-2 overflow-hidden" style={{ borderColor: '#e2e8f0', background: '#fff' }}>
+      <div className="flex items-center justify-between px-4 py-2.5 border-b" style={{ borderColor: '#e2e8f0', background: '#04091e' }}>
+        <div className="font-display text-lg tracking-wider" style={{ color: '#f5c842' }}>Group {group}</div>
+        <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: '#5a7499' }}>
+          Click to rank · again to clear
         </div>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {teams.map((team) => {
+      <div className="grid grid-cols-2 gap-0">
+        {teams.map((team, idx) => {
           const r = rankFor(team)
           const isUnranked = r === 0
           const isFourth = isUnranked && picked.first && picked.second && picked.third
+          const cfg = rankConfig[r]
+          const borderRight = idx % 2 === 0 ? '1px solid #e2e8f0' : 'none'
+          const borderBottom = idx < 2 ? '1px solid #e2e8f0' : 'none'
           return (
             <button
               key={team}
               type="button"
               onClick={() => handleClick(team)}
-              className={`relative flex flex-col items-center gap-1 px-2 py-3 rounded-lg border-2 text-sm font-medium transition-all
-                ${r
-                  ? rankStyle[r]
-                  : isFourth
-                    ? 'border-grass/40 bg-pitch/30 text-muted opacity-60 line-through'
-                    : 'border-grass bg-pitch hover:border-lime'
-                }
-              `}
+              className="relative flex items-center gap-2.5 px-3 py-3 text-sm font-medium transition-all text-left"
+              style={{
+                background: r ? cfg.bg : isFourth ? '#f8fafc' : '#ffffff',
+                color: r ? cfg.text : isFourth ? '#94a3b8' : '#0d1f3d',
+                borderRight,
+                borderBottom,
+                textDecoration: isFourth ? 'line-through' : 'none',
+                opacity: isFourth ? 0.6 : 1,
+              }}
             >
-              <span className="text-2xl leading-none">{flagFor(team)}</span>
-              <span className="text-xs text-center leading-tight">{team}</span>
+              <span className="text-2xl leading-none shrink-0">{flagFor(team)}</span>
+              <span className="text-xs font-semibold leading-tight truncate">{team}</span>
               {r > 0 && (
-                <span className="absolute -top-2 -right-2 bg-pitch border border-current rounded-full px-1.5 py-0.5 text-[10px] font-bold">
-                  {rankBadge[r]}
+                <span className="absolute top-1.5 right-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                  style={{ background: 'rgba(255,255,255,0.25)', color: '#fff' }}>
+                  {cfg.badge}
                 </span>
               )}
               {isFourth && (
-                <span className="absolute -top-2 -right-2 bg-pitch border border-grass/60 rounded-full px-1.5 py-0.5 text-[10px] font-mono text-muted">
+                <span className="absolute top-1.5 right-1.5 rounded-full px-1.5 py-0.5 text-[9px] font-mono"
+                  style={{ background: '#94a3b8', color: '#fff' }}>
                   OUT
                 </span>
               )}
