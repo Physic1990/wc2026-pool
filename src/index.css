@@ -2,49 +2,118 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
-  background-color: #04091e;
-  color: #e8eef8;
+  background-color: #f7f9ff;
+  color: #0d1f3d;
   font-family: 'DM Sans', sans-serif;
   min-height: 100vh;
 }
 
-/* WC 2026 diagonal stripe background */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      135deg,
-      transparent,
-      transparent 80px,
-      rgba(245, 200, 66, 0.03) 80px,
-      rgba(245, 200, 66, 0.03) 81px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 80px,
-      rgba(196, 18, 48, 0.02) 80px,
-      rgba(196, 18, 48, 0.02) 81px
-    );
-  pointer-events: none;
-  z-index: 0;
-}
-
-#root {
-  position: relative;
-  z-index: 1;
-}
-
+#root { position: relative; z-index: 1; }
 .font-display { font-family: 'Bebas Neue', cursive; }
+
+/* ═══════════════════════════════════════════════
+   KICKED BALL ANIMATION
+   Ball launches up-right with spin, arcs back
+═══════════════════════════════════════════════ */
+.ball-kicked {
+  display: inline-block;
+  animation: kick 2.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes kick {
+  0%   { transform: translateY(0px)  rotate(0deg)   scale(1);    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+  8%   { transform: translateY(-2px) rotate(30deg)  scale(1.05); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25)); }
+  20%  { transform: translateY(-18px) rotate(110deg) scale(1.12); filter: drop-shadow(0 12px 20px rgba(196,18,48,0.4)); }
+  35%  { transform: translateY(-28px) rotate(200deg) scale(1.15); filter: drop-shadow(0 18px 28px rgba(196,18,48,0.3)); }
+  50%  { transform: translateY(-22px) rotate(280deg) scale(1.1);  filter: drop-shadow(0 14px 22px rgba(0,0,0,0.2)); }
+  65%  { transform: translateY(-8px)  rotate(330deg) scale(1.05); filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25)); }
+  78%  { transform: translateY(2px)   rotate(355deg) scale(0.98); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35)); }
+  85%  { transform: translateY(-3px)  rotate(360deg) scale(1.02); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+  92%  { transform: translateY(1px)   rotate(360deg) scale(0.99); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+  100% { transform: translateY(0px)   rotate(360deg) scale(1);    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+}
+
+/* ═══════════════════════════════════════════════
+   NAVBAR — dark WC stripe
+═══════════════════════════════════════════════ */
+.wc-navbar {
+  background: linear-gradient(135deg, #04091e 0%, #0a1535 60%, #170812 100%);
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, #c41230 0%, #f5c842 50%, #c41230 100%) 1;
+  box-shadow: 0 4px 24px rgba(4,9,30,0.25);
+}
+
+/* ═══════════════════════════════════════════════
+   HERO SECTION (top of sign-in, dashboard etc)
+═══════════════════════════════════════════════ */
+.wc-hero-banner {
+  background: linear-gradient(135deg, #04091e 0%, #0d1f3d 45%, #1e0a10 100%);
+  border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem;
+}
+
+.wc-hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(245,200,66,0.04) 35px, rgba(245,200,66,0.04) 36px),
+    repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(196,18,48,0.03) 35px, rgba(196,18,48,0.03) 36px);
+}
+
+.wc-hero-banner::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #c41230, #f5c842, #c41230);
+}
+
+/* ═══════════════════════════════════════════════
+   CARDS on white background
+═══════════════════════════════════════════════ */
+.wc-card {
+  background: #ffffff;
+  border: 1px solid #dde3f0;
+  border-radius: 1rem;
+  box-shadow: 0 2px 12px rgba(13,31,61,0.08);
+}
+
+.wc-card-dark {
+  background: #04091e;
+  border: 1px solid #0d1f3d;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(4,9,30,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   FLOATING BALL BACKGROUND DECORATION
+═══════════════════════════════════════════════ */
+.wc-bg-ball {
+  position: fixed;
+  font-size: 200px;
+  opacity: 0.025;
+  pointer-events: none;
+  user-select: none;
+  animation: bg-drift 20s ease-in-out infinite;
+  z-index: 0;
+  bottom: -40px;
+  right: -40px;
+}
+
+@keyframes bg-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  33%       { transform: translate(-20px, -15px) rotate(120deg); }
+  66%       { transform: translate(10px, -25px) rotate(240deg); }
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #04091e; }
-::-webkit-scrollbar-thumb { background: #f5c842; border-radius: 3px; }
+::-webkit-scrollbar-track { background: #f0f4ff; }
+::-webkit-scrollbar-thumb { background: linear-gradient(#c41230, #f5c842); border-radius: 3px; }

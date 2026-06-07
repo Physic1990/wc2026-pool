@@ -19,9 +19,11 @@ import LiveScores from './pages/LiveScores.jsx'
 
 export default function App() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{background: '#f7f9ff'}}>
+      {/* Floating decorative ball */}
+      <div className="wc-bg-ball select-none pointer-events-none">⚽</div>
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 pb-16">
+      <main className="max-w-5xl mx-auto px-4 pb-16 relative z-10">
         <Routes>
           {/* Public auth routes */}
           <Route path="/sign-in"          element={<RedirectIfAuthed><SignIn /></RedirectIfAuthed>} />

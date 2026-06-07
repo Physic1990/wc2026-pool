@@ -9,12 +9,16 @@ export default {
         mono: ['DM Mono', 'monospace'],
       },
       colors: {
-        pitch: '#04091e',        // deep navy background
-        grass: '#0d1f3d',        // card/border navy
-        lime: '#f5c842',         // gold — primary accent (buttons, headings, active)
-        gold: '#f5c842',         // gold
-        red: '#c41230',          // WC crimson red
-        muted: '#5a7499',        // muted blue-grey text
+        pitch:  '#04091e',   // dark navy (card bg)
+        grass:  '#0d1f3d',   // navy (borders inside dark cards)
+        lime:   '#c41230',   // WC RED — primary CTA buttons
+        gold:   '#f5c842',   // WC gold — headings/accents
+        red:    '#c41230',   // WC crimson
+        muted:  '#7a8fb0',   // blue-grey (inside dark cards)
+        // light-mode equivalents
+        'surface': '#ffffff',
+        'border':  '#dde3f0',
+        'ink':     '#0d1f3d',
       },
     },
   },

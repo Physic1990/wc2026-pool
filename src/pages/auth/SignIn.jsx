@@ -74,13 +74,19 @@ export default function SignIn() {
 // ---------------------------------------------------------------------------
 export function AuthShell({ title, subtitle, children }) {
   return (
-    <div className="pt-12 max-w-md mx-auto">
-      <div className="text-center mb-8">
-        <div className="text-5xl mb-2">⚽</div>
-        <h1 className="font-display text-4xl text-lime tracking-widest">{title}</h1>
-        {subtitle && <p className="text-muted font-mono text-sm mt-1">{subtitle}</p>}
+    <div className="pt-10 max-w-md mx-auto">
+      {/* WC Hero Banner */}
+      <div className="wc-hero-banner mb-6 text-center">
+        <div className="relative z-10">
+          <div className="text-7xl mb-2 ball-kicked inline-block">⚽</div>
+          <h1 className="font-display text-5xl tracking-widest" style={{color: '#f5c842'}}>{title}</h1>
+          {subtitle && <p className="font-mono text-sm mt-1" style={{color: '#7a8fb0'}}>{subtitle}</p>}
+          <div className="mt-3 text-xs font-mono tracking-widest" style={{color: '#4a6080'}}>
+            🇺🇸 USA · 🇨🇦 CANADA · 🇲🇽 MEXICO · 2026
+          </div>
+        </div>
       </div>
-      <div className="bg-grass/20 border border-grass rounded-2xl p-6">{children}</div>
+      <div className="wc-card-dark p-6">{children}</div>
     </div>
   )
 }
