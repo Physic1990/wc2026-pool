@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
+import Footer from './components/Footer.jsx'
 import { useAuth, RequireAuth } from './lib/auth.jsx'
 
 import SignIn from './pages/auth/SignIn.jsx'
@@ -23,7 +24,7 @@ export default function App() {
       {/* Floating decorative ball */}
       <div className="wc-bg-ball select-none pointer-events-none">⚽</div>
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 pb-16 relative z-10">
+      <main className="max-w-5xl mx-auto px-4 pb-16 relative z-10 min-h-[60vh]">
         <Routes>
           {/* Public auth routes */}
           <Route path="/sign-in"          element={<RedirectIfAuthed><SignIn /></RedirectIfAuthed>} />
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="*"                 element={<Navigate to="/" replace />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   )
 }
