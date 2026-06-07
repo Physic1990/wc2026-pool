@@ -101,7 +101,7 @@ export function Field({ label, type = 'text', value, onChange, autoComplete, aut
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
-        className="mt-1 w-full bg-pitch border border-grass rounded-lg px-3 py-2.5 focus:outline-none focus:border-lime transition-colors"
+        className="mt-1 w-full bg-pitch border border-grass rounded-lg px-3 py-2.5 focus:outline-none focus:border-lime transition-colors text-white"
       />
     </label>
   )
