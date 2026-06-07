@@ -18,7 +18,7 @@ export default {
         // light-mode equivalents
         'surface': '#ffffff',
         'border':  '#dde3f0',
-        'ink':     '#0d1f3d',
+        'ink':     '#111827',   // near-black for text on white backgrounds
       },
     },
   },

@@ -34,6 +34,7 @@ export default function Navbar() {
         {/* Desktop nav */}
         <nav className="hidden md:flex gap-1 items-center">
           <NavLink to="/how-it-works" current={pathname}>How it Works</NavLink>
+          <NavLink to="/teams" current={pathname}>🗺️ Teams</NavLink>
           <NavLink to="/live" current={pathname}>🔴 Live</NavLink>
           {!loading && user && (
             <>
@@ -78,6 +79,7 @@ export default function Navbar() {
         <div className="md:hidden border-t px-4 py-3 space-y-1"
              style={{background: '#04091e', borderColor: '#0d1f3d'}}>
           <MobileLink to="/how-it-works" current={pathname} onClick={close}>How it Works</MobileLink>
+          <MobileLink to="/teams" current={pathname} onClick={close}>🗺️ Teams Map</MobileLink>
           <MobileLink to="/live" current={pathname} onClick={close}>🔴 Live Scores</MobileLink>
           {!loading && user && (
             <>

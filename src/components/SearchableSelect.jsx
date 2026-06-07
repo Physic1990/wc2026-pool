@@ -64,10 +64,10 @@ export default function SearchableSelect({ value, onChange, options, placeholder
             onChange={e => setQuery(e.target.value)}
             placeholder={placeholder}
             onClick={e => e.stopPropagation()}
-            className="flex-1 bg-transparent text-sm outline-none text-white placeholder-muted"
+            className="flex-1 bg-transparent text-sm outline-none text-ink placeholder-muted"
           />
         ) : (
-          <span className={`flex-1 text-sm truncate ${value ? 'text-white' : 'text-muted'}`}>
+          <span className={`flex-1 text-sm truncate ${value ? 'text-ink' : 'text-muted'}`}>
             {value ? selectedLabel : <span className="text-muted">{placeholder}</span>}
           </span>
         )}
@@ -88,7 +88,7 @@ export default function SearchableSelect({ value, onChange, options, placeholder
                 key={o.value}
                 onClick={() => select(o.value)}
                 className={`w-full text-left px-4 py-2.5 text-sm hover:bg-grass/30 transition-colors flex items-center justify-between gap-2
-                  ${o.value === value ? 'bg-lime/10 text-lime font-bold' : 'text-white'}`}
+                  ${o.value === value ? 'bg-lime/10 text-lime font-bold' : 'text-ink'}`}
               >
                 <span className="truncate">{o.label}</span>
                 {o.sub && <span className="text-xs text-muted font-mono shrink-0">{o.sub}</span>}

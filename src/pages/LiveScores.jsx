@@ -211,23 +211,23 @@ function MatchCard({ match }) {
 
         {/* Teams & score */}
         <div className="flex-1 flex items-center justify-between gap-1 sm:gap-2 min-w-0">
-          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate ${homeWin ? 'text-lime' : 'text-white'}`}>
+          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate ${homeWin ? 'text-lime' : 'text-ink'}`}>
             {match.homeTeam}
           </span>
 
           <div className="flex items-center gap-1 shrink-0 px-1">
             {isFinished || isLive ? (
               <span className="font-display text-lg sm:text-xl tracking-widest">
-                <span className={homeWin ? 'text-lime' : 'text-white'}>{match.homeScore}</span>
+                <span className={homeWin ? 'text-lime' : 'text-ink'}>{match.homeScore}</span>
                 <span className="text-muted mx-1">–</span>
-                <span className={awayWin ? 'text-lime' : 'text-white'}>{match.awayScore}</span>
+                <span className={awayWin ? 'text-lime' : 'text-ink'}>{match.awayScore}</span>
               </span>
             ) : (
               <span className="text-muted font-mono text-xs sm:text-sm">vs</span>
             )}
           </div>
 
-          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate text-right ${awayWin ? 'text-lime' : 'text-white'}`}>
+          <span className={`font-bold text-xs sm:text-sm flex-1 min-w-0 truncate text-right ${awayWin ? 'text-lime' : 'text-ink'}`}>
             {match.awayTeam}
           </span>
         </div>
