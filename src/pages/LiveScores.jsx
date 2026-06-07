@@ -96,6 +96,9 @@ export default function LiveScores() {
         </button>
       </div>
 
+      {/* Venue Map */}
+      <VenueMap matches={matches} />
+
       {error && (
         <div className="bg-red-900/30 border border-red-700 rounded-xl p-4 text-sm font-mono text-red-300">
           {error}
@@ -322,6 +325,143 @@ function TopScorersTable({ scorers, loading }) {
           ))}
         </tbody>
       </table>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Host city venue map
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Approximate % positions on a North America bounding box (left%, top%)
+const CITY_POSITIONS = {
+  'Vancouver':      { left: '14%', top: '14%', flag: '🇨🇦' },
+  'Toronto':        { left: '42%', top: '20%', flag: '🇨🇦' },
+  'Seattle':        { left: '13%', top: '20%', flag: '🇺🇸' },
+  'San Francisco':  { left: '10%', top: '33%', flag: '🇺🇸' },
+  'Santa Clara':    { left: '10%', top: '33%', flag: '🇺🇸' },
+  'Los Angeles':    { left: '12%', top: '42%', flag: '🇺🇸' },
+  'Inglewood':      { left: '12%', top: '42%', flag: '🇺🇸' },
+  'Kansas City':    { left: '38%', top: '32%', flag: '🇺🇸' },
+  'Dallas':         { left: '37%', top: '46%', flag: '🇺🇸' },
+  'Foxborough':     { left: '55%', top: '18%', flag: '🇺🇸' },
+  'East Rutherford':{ left: '56%', top: '22%', flag: '🇺🇸' },
+  'Philadelphia':   { left: '55%', top: '24%', flag: '🇺🇸' },
+  'Atlanta':        { left: '48%', top: '38%', flag: '🇺🇸' },
+  'Miami':          { left: '50%', top: '48%', flag: '🇺🇸' },
+  'Guadalajara':    { left: '26%', top: '58%', flag: '🇲🇽' },
+  'Mexico City':    { left: '30%', top: '64%', flag: '🇲🇽' },
+  'Monterrey':      { left: '34%', top: '56%', flag: '🇲🇽' },
+}
+
+function VenueMap({ matches }) {
+  const [hoveredCity, setHoveredCity] = useState(null)
+
+  // Count matches per city
+  const cityCounts = {}
+  matches.forEach(m => {
+    const city = m.venue?.city
+    if (city) cityCounts[city] = (cityCounts[city] || 0) + 1
+  })
+
+  const activeCities = Object.keys(CITY_POSITIONS).filter(c =>
+    Object.keys(cityCounts).some(mc => mc === c || mc.includes(c) || c.includes(mc))
+  )
+
+  return (
+    <div className="rounded-2xl overflow-hidden border" style={{ borderColor: '#dde3f0', background: '#fff' }}>
+      {/* Header */}
+      <div className="px-4 py-3 flex items-center justify-between border-b" style={{ borderColor: '#dde3f0' }}>
+        <div className="font-display text-lg tracking-wider" style={{ color: '#0d1f3d' }}>
+          🏟️ HOST VENUES · USA 🇺🇸 CANADA 🇨🇦 MEXICO 🇲🇽
+        </div>
+        <div className="text-xs font-mono" style={{ color: '#9aafcc' }}>
+          {Object.keys(cityCounts).length} cities
+        </div>
+      </div>
+
+      {/* Map */}
+      <div className="relative" style={{ paddingTop: '52%', background: 'linear-gradient(180deg, #dbeafe 0%, #bfdbfe 40%, #93c5fd 100%)' }}>
+        {/* Ocean */}
+        <div className="absolute inset-0">
+          {/* Simple North America silhouette using divs */}
+          <svg viewBox="0 0 100 55" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet">
+            {/* Canada */}
+            <path d="M8 2 L80 2 L82 8 L78 12 L75 10 L70 14 L65 12 L60 15 L55 12 L50 16 L45 13 L40 16 L35 14 L30 16 L25 13 L20 16 L15 13 L10 16 L8 12 Z"
+              fill="#e8f0fe" stroke="#c7d7f7" strokeWidth="0.3"/>
+            {/* USA */}
+            <path d="M10 16 L75 14 L76 20 L78 26 L74 30 L70 28 L65 32 L60 30 L55 34 L50 32 L45 36 L40 34 L35 38 L30 36 L25 32 L20 28 L15 24 L10 22 Z"
+              fill="#fee2e2" stroke="#fca5a5" strokeWidth="0.3"/>
+            {/* Florida */}
+            <path d="M60 34 L65 34 L66 42 L62 44 L58 40 Z" fill="#fecaca" stroke="#fca5a5" strokeWidth="0.3"/>
+            {/* Mexico */}
+            <path d="M25 36 L50 34 L52 38 L48 44 L44 48 L38 52 L32 50 L28 46 L24 42 Z"
+              fill="#dcfce7" stroke="#86efac" strokeWidth="0.3"/>
+            {/* Great Lakes hint */}
+            <ellipse cx="52" cy="20" rx="5" ry="3" fill="#bfdbfe" opacity="0.7"/>
+          </svg>
+
+          {/* City dots */}
+          {Object.entries(CITY_POSITIONS).map(([city, pos]) => {
+            const matchCount = Object.entries(cityCounts).find(([mc]) =>
+              mc === city || mc.includes(city) || city.includes(mc)
+            )?.[1] || 0
+            const isHovered = hoveredCity === city
+
+            return (
+              <div
+                key={city}
+                className="absolute"
+                style={{ left: pos.left, top: pos.top, transform: 'translate(-50%, -50%)', zIndex: isHovered ? 20 : 10 }}
+                onMouseEnter={() => setHoveredCity(city)}
+                onMouseLeave={() => setHoveredCity(null)}
+              >
+                {/* Dot */}
+                <div
+                  className="rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center font-bold text-white"
+                  style={{
+                    width: isHovered ? 28 : matchCount > 6 ? 22 : 18,
+                    height: isHovered ? 28 : matchCount > 6 ? 22 : 18,
+                    background: pos.flag === '🇺🇸' ? '#c41230' : pos.flag === '🇨🇦' ? '#d00' : '#006847',
+                    boxShadow: isHovered ? '0 0 0 3px rgba(255,255,255,0.8), 0 4px 12px rgba(0,0,0,0.3)' : '0 2px 6px rgba(0,0,0,0.2)',
+                    fontSize: 9,
+                  }}
+                >
+                  {matchCount || ''}
+                </div>
+
+                {/* Tooltip */}
+                {isHovered && (
+                  <div
+                    className="absolute left-1/2 bottom-full mb-2 rounded-lg px-2 py-1.5 text-white text-xs font-mono whitespace-nowrap shadow-xl"
+                    style={{ transform: 'translateX(-50%)', background: '#04091e', zIndex: 30 }}
+                  >
+                    <div className="font-bold">{pos.flag} {city}</div>
+                    {matchCount > 0 && <div style={{ color: '#f5c842' }}>{matchCount} matches</div>}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div className="px-4 py-3 flex flex-wrap gap-4 text-xs font-mono border-t" style={{ borderColor: '#dde3f0', color: '#5a7499' }}>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: '#c41230' }}/>
+          USA (10 cities)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: '#d00' }}/>
+          Canada (2 cities)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full" style={{ background: '#006847' }}/>
+          Mexico (3 cities)
+        </span>
+        <span className="ml-auto">Hover dots for details</span>
+      </div>
     </div>
   )
 }
