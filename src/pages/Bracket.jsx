@@ -151,7 +151,7 @@ export default function Bracket() {
             ['Final',   breakdown?.Final  ?? 0],
             ['Bonuses', breakdown?.bonus  ?? 0],
           ].map(([label, value]) => (
-            <div key={label} className="bg-grass/30 border border-grass rounded-lg p-2">
+            <div key={label} className="rounded-lg p-2 border" style={{ background: '#04091e', borderColor: '#0d1f3d' }}>
               <div className="text-[10px] uppercase font-mono text-muted">{label}</div>
               <div className="font-display text-xl text-lime">{value}</div>
             </div>
@@ -238,73 +238,87 @@ function GroupView({ group, teams, picks, actual, hasResults }) {
   }
   const rankBadge = { 1: '🥇', 2: '🥈', 3: '🥉' }
 
+  // Style config per state
+  const stateStyle = {
+    correct:     { bg: '#166534', border: '#16a34a', text: '#fff' },
+    'wrong-rank':{ bg: '#78350f', border: '#d97706', text: '#fff' },
+    'wrong-out': { bg: '#7f1d1d', border: '#dc2626', text: '#fff' },
+    missed:      { bg: '#1e3a8a', border: '#3b82f6', text: '#fff' },
+    picked:      (r) => r === 1
+      ? { bg: '#c41230', border: '#c41230', text: '#fff' }
+      : r === 2 ? { bg: '#1e3a6e', border: '#1e3a6e', text: '#fff' }
+      : { bg: '#92400e', border: '#92400e', text: '#fff' },
+    unpicked:    { bg: '#f1f5f9', border: '#e2e8f0', text: '#94a3b8' },
+  }
+
   return (
-    <div className="bg-grass/20 border border-grass rounded-xl p-3">
-      <div className="font-display text-lg text-lime mb-2">Group {group}</div>
-      <div className="grid grid-cols-2 gap-1.5">
-        {teams.map((team) => {
+    <div className="rounded-xl overflow-hidden border" style={{ borderColor: '#e2e8f0', background: '#fff' }}>
+      <div className="px-4 py-2.5 border-b flex items-center justify-between" style={{ background: '#04091e', borderColor: '#0d1f3d' }}>
+        <div className="font-display text-lg tracking-wider" style={{ color: '#f5c842' }}>Group {group}</div>
+        {hasResults && (
+          <div className="text-[10px] font-mono flex gap-2" style={{ color: '#5a7499' }}>
+            <span>✅ correct</span><span>⚠️ pos</span><span>❌ out</span>
+          </div>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-0">
+        {teams.map((team, idx) => {
           const myRank = rankFor(picks, team)
           const actualRank = rankFor(actual, team)
 
-          // Determine result state
-          let state = 'unpicked' // not in top 3 by user
+          let state = 'unpicked'
           if (myRank > 0) {
             if (!hasResults) state = 'picked'
             else if (myRank === actualRank) state = 'correct'
-            else if (actualRank > 0) state = 'wrong-rank' // picked to qualify but wrong position
-            else state = 'wrong-out' // picked to qualify but actually out
+            else if (actualRank > 0) state = 'wrong-rank'
+            else state = 'wrong-out'
           } else if (hasResults && actualRank > 0) {
-            state = 'missed' // user had OUT but they actually qualified
+            state = 'missed'
           }
 
-          const styles = {
-            correct:    'border-green-500 bg-green-900/30 text-green-300',
-            'wrong-rank':'border-yellow-500 bg-yellow-900/20 text-yellow-300',
-            'wrong-out':'border-red-600 bg-red-900/20 text-red-300',
-            missed:     'border-blue-500 bg-blue-900/20 text-blue-300 opacity-80',
-            picked:     myRank === 1 ? 'border-lime bg-lime text-pitch' : myRank === 2 ? 'border-yellow-400 bg-yellow-400/20 text-yellow-300' : 'border-orange-400 bg-orange-400/20 text-orange-300',
-            unpicked:   'border-grass/40 bg-pitch/30 text-muted opacity-50 line-through',
-          }
-
+          const s = state === 'picked' ? stateStyle.picked(myRank) : stateStyle[state]
           const badge = myRank > 0 ? rankBadge[myRank] : null
 
-          // Points earned from this team
           let pts = null
           if (hasResults) {
-            if (state === 'correct') pts = myRank === 1 ? 2 : 1  // 1st=2pts, 2nd/3rd=1pt
-            else if (state === 'wrong-rank') pts = 0
-            else if (state === 'wrong-out') pts = 0
-            else pts = null
+            if (state === 'correct') pts = myRank === 1 ? 2 : 1
+            else if (state === 'wrong-rank' || state === 'wrong-out') pts = 0
           }
 
-          const indicator = {
-            correct: '✅',
-            'wrong-rank': '⚠️',
-            'wrong-out': '❌',
-            missed: '↑',
-          }[state]
+          const indicator = { correct:'✅','wrong-rank':'⚠️','wrong-out':'❌',missed:'↑' }[state]
+          const borderRight = idx % 2 === 0 ? '1px solid #e2e8f0' : 'none'
+          const borderBottom = idx < 2 ? '1px solid #e2e8f0' : 'none'
 
           return (
-            <div key={team} className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-2 text-xs ${styles[state]}`}>
-              <span className="text-sm">{flagFor(team)}</span>
-              <span className="flex-1 truncate">{team}</span>
-              <span className="shrink-0 flex items-center gap-0.5">
+            <div key={team}
+              className="flex items-center gap-2 px-3 py-2.5 text-xs font-medium relative"
+              style={{
+                background: s.bg,
+                color: s.text,
+                borderRight,
+                borderBottom,
+                textDecoration: state === 'unpicked' ? 'line-through' : 'none',
+                opacity: state === 'unpicked' ? 0.55 : 1,
+              }}>
+              <span className="text-base leading-none shrink-0">{flagFor(team)}</span>
+              <span className="flex-1 truncate font-semibold">{team}</span>
+              <span className="shrink-0 flex items-center gap-0.5 text-[10px]">
                 {badge && <span>{badge}</span>}
                 {indicator && <span>{indicator}</span>}
                 {pts !== null && (
-                  <span className={`font-bold font-mono text-[10px] ml-0.5 ${pts > 0 ? 'text-green-300' : 'text-red-400'}`}>
+                  <span className="font-bold font-mono ml-0.5" style={{ color: pts > 0 ? '#86efac' : '#fca5a5' }}>
                     {pts > 0 ? `+${pts}` : '0'}
                   </span>
                 )}
-                {state === 'unpicked' && <span className="text-[9px] font-mono">OUT</span>}
+                {state === 'unpicked' && <span className="font-mono" style={{ color: '#94a3b8' }}>OUT</span>}
               </span>
             </div>
           )
         })}
       </div>
       {hasResults && (
-        <div className="mt-2 text-[10px] font-mono text-muted flex gap-2 flex-wrap">
-          <span>✅ correct</span><span>⚠️ wrong pos</span><span>❌ out</span>
+        <div className="px-3 py-1.5 text-[10px] font-mono" style={{ background: '#f8fafc', color: '#94a3b8', borderTop: '1px solid #e2e8f0' }}>
+          <span>✅ correct pos &nbsp;·&nbsp; ⚠️ wrong pos &nbsp;·&nbsp; ❌ eliminated &nbsp;·&nbsp; ↑ missed</span>
         </div>
       )}
     </div>
@@ -320,7 +334,7 @@ function MatchList({ matches, picks, winners, actualWinners, pts }) {
         const actualWinner = actualWinners[m.id]
         const hasResult = !!actualWinner
         return (
-          <div key={m.id} className="bg-grass/20 border border-grass rounded-lg p-2 grid grid-cols-12 items-center gap-2 text-sm">
+          <div key={m.id} className="rounded-lg p-2 grid grid-cols-12 items-center gap-2 text-sm border" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
             <div className="col-span-2 text-xs font-mono text-muted">
               M{m.id}<span className="hidden sm:inline"> · {pts}pt{pts > 1 ? 's' : ''}</span>
             </div>
@@ -338,17 +352,21 @@ function TeamChip({ team, isPicked, isCorrect, isWrong, pts, className = '' }) {
   if (!team) {
     return <div className={`${className} text-xs text-muted italic px-2`}>—</div>
   }
+  const style = isCorrect
+    ? { background: '#166534', borderColor: '#16a34a', color: '#fff' }
+    : isWrong
+      ? { background: '#7f1d1d', borderColor: '#dc2626', color: '#fff' }
+      : isPicked
+        ? { background: '#c41230', borderColor: '#c41230', color: '#fff', fontWeight: 700 }
+        : { background: '#f8fafc', borderColor: '#e2e8f0', color: '#0d1f3d' }
+
   return (
-    <div className={`${className} flex items-center gap-1.5 px-2 py-1.5 rounded border text-xs
-      ${isCorrect ? 'border-green-500 bg-green-900/30 text-green-300 font-bold'
-        : isWrong  ? 'border-red-600 bg-red-900/20 text-red-300'
-        : isPicked ? 'border-lime bg-lime text-pitch font-bold'
-        : 'border-grass bg-pitch text-muted'}`}>
+    <div className={`${className} flex items-center gap-1.5 px-2 py-1.5 rounded border text-xs`} style={style}>
       <span className="text-sm">{flagFor(team)}</span>
-      <span className="truncate flex-1">{team}</span>
-      {isCorrect && <span className="shrink-0 flex items-center gap-0.5">✅ <span className="text-green-300 font-bold font-mono">+{pts}</span></span>}
+      <span className="truncate flex-1 font-semibold">{team}</span>
+      {isCorrect && <span className="shrink-0 flex items-center gap-0.5">✅ <span className="font-bold font-mono" style={{color:'#86efac'}}>+{pts}</span></span>}
       {isWrong   && <span className="shrink-0">❌</span>}
-      {isPicked && !isCorrect && !isWrong && <span className="shrink-0 text-xs">✓</span>}
+      {isPicked && !isCorrect && !isWrong && <span className="shrink-0 text-xs opacity-70">✓</span>}
     </div>
   )
 }
