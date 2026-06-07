@@ -527,13 +527,13 @@ function MatchCard({
   const isR32ThirdSlot = match.a && match.b?.kind === 'third'
 
   return (
-    <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-3">
+    <div className="rounded-xl p-4 space-y-3 border" style={{ background: '#fff', borderColor: '#e2e8f0', boxShadow: '0 1px 4px rgba(13,31,61,0.06)' }}>
       <div className="flex items-center justify-between">
-        <div className="font-mono text-xs text-muted uppercase tracking-wider">
-          Match {match.id} · {ptsPerWin} pt{ptsPerWin > 1 ? 's' : ''}
+        <div className="font-mono text-xs font-bold uppercase tracking-wider" style={{ color: '#04091e' }}>
+          Match {match.id} · <span style={{ color: '#c41230' }}>{ptsPerWin} pt{ptsPerWin > 1 ? 's' : ''}</span>
         </div>
         {match.a && (
-          <div className="text-xs font-mono text-muted hidden sm:block">
+          <div className="text-xs font-mono hidden sm:block" style={{ color: '#94a3b8' }}>
             {slotLabel(match.a)} vs {slotLabel(match.b)}
           </div>
         )}
@@ -581,21 +581,22 @@ function SlotButton({ team, fallback, selected, disabled, onClick }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`w-full px-3 py-3 rounded-lg border text-sm font-medium transition-all flex items-center justify-center gap-2
-        ${selected
-          ? 'border-lime bg-lime text-pitch font-bold'
+      className="w-full px-3 py-3 rounded-lg border-2 text-sm font-medium transition-all flex items-center justify-center gap-2"
+      style={
+        selected
+          ? { background: '#c41230', borderColor: '#c41230', color: '#fff', fontWeight: 700 }
           : team
-            ? 'border-grass bg-pitch hover:border-lime'
-            : 'border-grass/40 bg-pitch/40 text-muted cursor-not-allowed'}
-      `}
+            ? { background: '#ffffff', borderColor: '#cbd5e1', color: '#0d1f3d', cursor: 'pointer' }
+            : { background: '#f8fafc', borderColor: '#e2e8f0', color: '#94a3b8', cursor: 'not-allowed' }
+      }
     >
       {team ? (
         <>
           <span className="text-lg leading-none">{flagFor(team)}</span>
-          <span>{team}</span>
+          <span className="font-semibold">{team}</span>
         </>
       ) : (
-        <span className="text-xs">{fallback}</span>
+        <span className="text-xs">{fallback || '—'}</span>
       )}
     </button>
   )
@@ -748,10 +749,10 @@ function FinalStep({
           const allPlayers = squadPlayers || [...OUTFIELD_PLAYERS, ...GOALKEEPERS]
           const players = allPlayers.filter(posFilter).sort((a, b) => a.name.localeCompare(b.name))
           return (
-          <div key={key} className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2">
-            <div className="font-mono text-xs text-muted uppercase tracking-wider">
+          <div key={key} className="rounded-xl p-4 space-y-2 border" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+            <div className="font-mono text-xs font-bold uppercase tracking-wider" style={{ color: '#04091e' }}>
               {label}
-              {squadPlayers && <span className="ml-2 text-lime">✓ real squads</span>}
+              {squadPlayers && <span className="ml-2 text-xs" style={{ color: '#c41230' }}>✓ real squads</span>}
             </div>
             <SearchableSelect
               value={bonuses[key]}
@@ -764,9 +765,9 @@ function FinalStep({
         })}
 
         {/* Dark Horse — searchable ranked dropdown */}
-        <div className="bg-grass/20 border border-grass rounded-xl p-4 space-y-2 sm:col-span-2">
-          <div className="font-mono text-xs text-muted uppercase tracking-wider">🐴 Dark Horse — Lowest-ranked team in QF+ (3 pts)</div>
-          <div className="text-xs text-muted font-mono bg-grass/20 rounded-lg p-2 space-y-1">
+        <div className="rounded-xl p-4 space-y-2 sm:col-span-2 border" style={{ background: '#fff', borderColor: '#e2e8f0' }}>
+          <div className="font-mono text-xs font-bold uppercase tracking-wider" style={{ color: '#04091e' }}>🐴 Dark Horse — Lowest-ranked team in QF+ (3 pts)</div>
+          <div className="text-xs font-mono rounded-lg p-2 space-y-1" style={{ background: '#f1f5f9', color: '#5a7499' }}>
             <p>Pick the team with the <strong className="text-lime">lowest FIFA rank</strong> that makes the Quarterfinals.</p>
             <p>Example: If New Zealand (FIFA #86) somehow reach the QF, anyone who picked them wins 3 pts.</p>
           </div>

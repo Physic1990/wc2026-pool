@@ -18,6 +18,7 @@ import HowItWorks from './pages/HowItWorks.jsx'
 import Admin from './pages/Admin.jsx'
 import LiveScores from './pages/LiveScores.jsx'
 import TeamsMap from './pages/TeamsMap.jsx'
+import ThirdPlace from './pages/ThirdPlace.jsx'
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/how-it-works"     element={<HowItWorks />} />
           <Route path="/live"             element={<LiveScores />} />
           <Route path="/teams"            element={<TeamsMap />} />
+          <Route path="/thirdplace"       element={<ThirdPlace />} />
 
           {/* Protected routes */}
           <Route path="/"                 element={<RequireAuth><Dashboard /></RequireAuth>} />
