@@ -88,10 +88,10 @@ export default function SearchableSelect({ value, onChange, options, placeholder
                 key={o.value}
                 onClick={() => select(o.value)}
                 className={`w-full text-left px-4 py-2.5 text-sm hover:bg-grass/30 transition-colors flex items-center justify-between gap-2
-                  ${o.value === value ? 'bg-lime/10 text-lime font-bold' : 'text-ink'}`}
+                  ${o.value === value ? 'bg-lime/10 text-lime font-bold' : 'text-white'}`}
               >
                 <span className="truncate">{o.label}</span>
-                {o.sub && <span className="text-xs text-muted font-mono shrink-0">{o.sub}</span>}
+                {o.sub && <span className="text-xs text-white/60 font-mono shrink-0">{o.sub}</span>}
               </button>
             ))
           )}
