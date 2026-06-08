@@ -83,27 +83,31 @@ export default function LeagueNew() {
       <div className="text-center mb-8">
         <div className="text-5xl mb-2">🏆</div>
         <h1 className="font-display text-4xl text-lime tracking-widest">CREATE LEAGUE</h1>
-        <p className="text-muted font-mono text-sm mt-1">Name your pool and we'll generate an invite code</p>
+        <p className="font-mono text-sm mt-1" style={{ color: '#5a7499' }}>Name your pool and we'll generate an invite code</p>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-grass/20 border border-grass rounded-2xl p-6 space-y-4"
+        className="rounded-2xl p-6 space-y-4 border"
+        style={{ background: '#fff', borderColor: '#e2e8f0' }}
       >
         <label className="block">
-          <span className="text-xs text-muted font-mono uppercase tracking-wider">League Name</span>
+          <span className="text-xs font-mono font-bold uppercase tracking-wider" style={{ color: '#04091e' }}>League Name</span>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Office Pool 2026"
             autoFocus
-            className="mt-1 w-full bg-pitch border border-grass rounded-lg px-3 py-2.5 focus:outline-none focus:border-lime"
+            className="mt-1 w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none transition-colors"
+            style={{ background: '#f8fafc', border: '1.5px solid #cbd5e1', color: '#0d1f3d' }}
+            onFocus={e => e.target.style.borderColor = '#c41230'}
+            onBlur={e => e.target.style.borderColor = '#cbd5e1'}
           />
         </label>
 
         {error && (
-          <div className="text-sm font-mono p-3 rounded-lg bg-grass/40 border border-grass" style={{ color: '#fca5a5' }}>
+          <div className="text-sm font-mono p-3 rounded-lg" style={{ background: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5' }}>
             {error}
           </div>
         )}
@@ -111,14 +115,16 @@ export default function LeagueNew() {
         <div className="flex gap-3 pt-2">
           <Link
             to="/"
-            className="flex-1 py-3 text-center border border-grass rounded-xl text-muted hover:text-lime hover:border-lime"
+            className="flex-1 py-3 text-center rounded-xl font-medium transition-colors"
+            style={{ background: '#f1f5f9', color: '#475569', border: '1.5px solid #cbd5e1' }}
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={submitting || name.trim().length < 2}
-            className="flex-1 py-3 bg-lime text-pitch font-bold rounded-xl hover:bg-lime/90 disabled:opacity-40 transition-all"
+            className="flex-1 py-3 font-bold rounded-xl disabled:opacity-40 transition-all"
+            style={{ background: '#c41230', color: '#fff' }}
           >
             {submitting ? 'Creating...' : 'Create League'}
           </button>
