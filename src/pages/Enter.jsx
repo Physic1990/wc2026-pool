@@ -658,7 +658,7 @@ function ThirdPlaceSlot({
                   onClick={() => assign(team)}
                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs border transition-all
                     ${taken
-                      ? 'border-grass/40 bg-pitch/40 text-muted cursor-not-allowed line-through opacity-60'
+                      ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed line-through'
                       : 'border-grass bg-pitch text-white hover:border-lime hover:text-lime'}`}
                   title={taken ? 'Already assigned to another slot' : `Assign ${team} here`}
                 >
