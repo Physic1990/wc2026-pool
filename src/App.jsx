@@ -41,7 +41,7 @@ export default function App() {
           <Route path="/thirdplace"       element={<ThirdPlace />} />
 
           {/* Protected routes */}
-          <Route path="/"                 element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="/"                 element={<HomeRoute />} />
           <Route path="/enter"            element={<RequireAuth><Enter /></RequireAuth>} />
           <Route path="/bracket/:userId"  element={<RequireAuth><Bracket /></RequireAuth>} />
           <Route path="/leagues/new"      element={<RequireAuth><LeagueNew /></RequireAuth>} />
@@ -57,6 +57,14 @@ export default function App() {
       <Footer />
     </div>
   )
+}
+
+// Logged-in users → Dashboard, guests → How It Works
+function HomeRoute() {
+  const { user, loading } = useAuth()
+  if (loading) return null
+  if (user) return <Dashboard />
+  return <Navigate to="/how-it-works" replace />
 }
 
 function RedirectIfAuthed({ children }) {
