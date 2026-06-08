@@ -566,7 +566,7 @@ function SlotButton({ team, fallback, selected, disabled, onClick }) {
         ${selected
           ? 'border-lime bg-lime text-pitch font-bold'
           : team
-            ? 'border-grass bg-pitch hover:border-lime'
+            ? 'border-grass bg-pitch hover:border-lime text-white'
             : 'border-grass/40 bg-pitch/40 text-muted cursor-not-allowed'}
       `}
     >
@@ -734,7 +734,7 @@ function FinalStep({
               value={bonuses[key]}
               onChange={(e) => setBonuses((b) => ({ ...b, [key]: e.target.value }))}
               placeholder={key === 'dark_horse' ? 'Team name...' : 'Player name...'}
-              className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-lime"
+              className="w-full bg-pitch border border-grass rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-lime"
             />
           </div>
         ))}
