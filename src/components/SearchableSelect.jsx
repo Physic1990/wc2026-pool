@@ -64,10 +64,10 @@ export default function SearchableSelect({ value, onChange, options, placeholder
             onChange={e => setQuery(e.target.value)}
             placeholder={placeholder}
             onClick={e => e.stopPropagation()}
-            className="flex-1 bg-transparent text-sm outline-none text-ink placeholder-muted"
+            className="flex-1 bg-transparent text-sm outline-none text-white placeholder-muted"
           />
         ) : (
-          <span className={`flex-1 text-sm truncate ${value ? 'text-ink' : 'text-muted'}`}>
+          <span className={`flex-1 text-sm truncate ${value ? 'text-white' : 'text-muted'}`}>
             {value ? selectedLabel : <span className="text-muted">{placeholder}</span>}
           </span>
         )}

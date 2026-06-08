@@ -659,7 +659,7 @@ function ThirdPlaceSlot({
                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs border transition-all
                     ${taken
                       ? 'border-grass/40 bg-pitch/40 text-muted cursor-not-allowed line-through opacity-60'
-                      : 'border-grass bg-pitch hover:border-lime hover:text-lime'}`}
+                      : 'border-grass bg-pitch text-white hover:border-lime hover:text-lime'}`}
                   title={taken ? 'Already assigned to another slot' : `Assign ${team} here`}
                 >
                   <span>{flagFor(team)}</span>
