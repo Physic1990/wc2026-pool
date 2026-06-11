@@ -284,8 +284,8 @@ export async function fetchMatchGoalScorers() {
     matchId: m.id,
     homeTeam: mapTeam(m.homeTeam?.name || 'TBD'),
     awayTeam: mapTeam(m.awayTeam?.name || 'TBD'),
-    homeScore: m.score?.fullTime?.home ?? null,
-    awayScore: m.score?.fullTime?.away ?? null,
+    homeScore: m.score?.fullTime?.home ?? m.score?.regularTime?.home ?? null,
+    awayScore: m.score?.fullTime?.away ?? m.score?.regularTime?.away ?? null,
     status: m.status, // SCHEDULED, TIMED, IN_PLAY, PAUSED, FINISHED, SUSPENDED, POSTPONED
     stage: m.stage,
     matchday: m.matchday,

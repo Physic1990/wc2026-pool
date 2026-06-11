@@ -220,9 +220,9 @@ function MatchCard({ match }) {
           <div className="flex items-center gap-1 shrink-0 px-1">
             {isFinished || isLive ? (
               <span className="font-display text-lg sm:text-xl tracking-widest">
-                <span className={homeWin ? 'text-lime' : 'text-ink'}>{match.homeScore}</span>
+                <span className={homeWin ? 'text-lime' : 'text-ink'}>{match.homeScore ?? '?'}</span>
                 <span className="text-muted mx-1">–</span>
-                <span className={awayWin ? 'text-lime' : 'text-ink'}>{match.awayScore}</span>
+                <span className={awayWin ? 'text-lime' : 'text-ink'}>{match.awayScore ?? '?'}</span>
               </span>
             ) : (
               <span className="text-muted font-mono text-xs sm:text-sm">vs</span>
