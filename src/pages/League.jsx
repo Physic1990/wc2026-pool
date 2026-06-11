@@ -288,6 +288,28 @@ export default function League() {
                       <span className="italic">🔒 picks hidden until deadline</span>
                     )}
                   </div>
+                  {isLocked() && (
+                    <div className="flex flex-wrap gap-x-2 gap-y-0.5 mt-1">
+                      {[
+                        ['G', player.breakdown?.groups],
+                        ['3rd', player.breakdown?.third],
+                        ['R32', player.breakdown?.R32],
+                        ['R16', player.breakdown?.R16],
+                        ['QF', player.breakdown?.QF],
+                        ['SF', player.breakdown?.SF],
+                        ['F', player.breakdown?.Final],
+                        ['★', player.breakdown?.bonus],
+                      ].map(([label, val]) => val > 0 ? (
+                        <span key={label} className="text-[10px] font-mono" style={{ color: '#5a9e6f' }}>
+                          {label}:<span className="font-bold">{val}</span>
+                        </span>
+                      ) : (
+                        <span key={label} className="text-[10px] font-mono text-muted/50">
+                          {label}:0
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="w-32 hidden sm:block">
                   <div className="h-1.5 bg-grass rounded-full overflow-hidden">
